@@ -15,16 +15,18 @@ import { getUsers, createUser, updateUser, deleteUser } from "@/lib/api";
 import { UserDialog } from "@/components/users/user-dialog";
 import { auth } from "@/lib/auth";
 
+
 export default function SettingsPage() {
   const router = useRouter();
   const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const currentUser = auth.getUser();
 
   useEffect(() => {
     loadUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function loadUsers() {
@@ -82,10 +84,6 @@ export default function SettingsPage() {
     } catch (error) {
       console.error("Failed to delete user:", error);
     }
-  }
-
-  if (loading) {
-    return <div className="container mx-auto p-6">Loading...</div>;
   }
 
   return (

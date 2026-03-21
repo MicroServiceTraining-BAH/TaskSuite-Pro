@@ -41,6 +41,14 @@ yarn-error.log*
 # Keep migrations for deployment
 # prisma/migrations/*
 
+# Uploads (keep directory structure but ignore files)
+apps/api/uploads/*
+!apps/api/uploads/.gitkeep
+
+# Test artifacts
+test-screenshots/
+test-nav.mjs
+
 # IDE
 .idea
 .vscode

@@ -9,7 +9,7 @@ export default function ClientDashboardPage() {
   const [jobs, setJobs] = useState<any[]>([]);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -31,11 +31,8 @@ export default function ClientDashboardPage() {
       }
     }
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (loading) {
-    return <div className="container mx-auto p-6">Loading...</div>;
-  }
 
   const pendingEstimates = estimates.filter((e) => e.status === "draft" || e.status === "sent");
   const activeJobs = jobs.filter((j) => j.status === "pending" || j.status === "in_progress");

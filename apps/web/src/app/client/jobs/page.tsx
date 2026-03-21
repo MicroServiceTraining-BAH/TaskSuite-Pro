@@ -6,7 +6,7 @@ import { Card } from "@tasksuite/ui";
 
 export default function ClientJobsPage() {
   const [jobs, setJobs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -20,11 +20,8 @@ export default function ClientJobsPage() {
       }
     }
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (loading) {
-    return <div className="container mx-auto p-6">Loading...</div>;
-  }
 
   return (
     <div className="container mx-auto p-6">

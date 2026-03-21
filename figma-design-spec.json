@@ -1,0 +1,1637 @@
+{
+  "schemaVersion": "0.1",
+  "generatedAt": "2025-11-03T02:22:47.318904Z",
+  "fileName": "TaskSuite Pro - Enterprise Pro.json",
+  "meta": {
+    "theme": "Enterprise Pro",
+    "dark": false,
+    "fontFamily": "Poppins"
+  },
+  "document": {
+    "id": "0:0",
+    "name": "TaskSuite Pro - Enterprise Pro",
+    "type": "DOCUMENT",
+    "children": [
+      {
+        "id": "page-design-system",
+        "type": "CANVAS",
+        "name": "Design System",
+        "children": [
+          {
+            "id": "frame-design-system",
+            "name": "Design System",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "SECTION",
+                "name": "Colors",
+                "children": [
+                  {
+                    "type": "RECTANGLE",
+                    "name": "Primary",
+                    "fillStyle": "color_primary"
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "name": "Secondary",
+                    "fillStyle": "color_secondary"
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "name": "Success",
+                    "fillStyle": "color_success"
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "name": "Warning",
+                    "fillStyle": "color_warning"
+                  },
+                  {
+                    "type": "RECTANGLE",
+                    "name": "Danger",
+                    "fillStyle": "color_danger"
+                  }
+                ]
+              },
+              {
+                "type": "SECTION",
+                "name": "Typography",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "name": "H1",
+                    "style": "H1",
+                    "characters": "Heading 1"
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "H2",
+                    "style": "H2",
+                    "characters": "Heading 2"
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "H3",
+                    "style": "H3",
+                    "characters": "Heading 3"
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "Body",
+                    "style": "Body",
+                    "characters": "Body text"
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "Small",
+                    "style": "Small",
+                    "characters": "Small text"
+                  }
+                ]
+              },
+              {
+                "type": "SECTION",
+                "name": "Components",
+                "children": [
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "Primary",
+                      "variant": "primary"
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "Secondary",
+                      "variant": "secondary"
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "Ghost",
+                      "variant": "ghost"
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "Danger",
+                      "variant": "danger"
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Input/Textfield",
+                    "props": {
+                      "label": "Email"
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Select",
+                    "props": {
+                      "label": "Status"
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Sample",
+                      "value": "123"
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Table/Standard"
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Board/Kanban"
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Calendar/Monthly"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---auth",
+        "type": "CANVAS",
+        "name": "Company - Auth",
+        "children": [
+          {
+            "id": "frame-company/login",
+            "name": "Company/Login",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "INSTANCE",
+                "component": "Logo/Brand",
+                "props": {
+                  "brand": "TaskSuite Pro"
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Form/Standard",
+                "props": {
+                  "title": "Company Login",
+                  "fields": [
+                    {
+                      "type": "email",
+                      "label": "Email"
+                    },
+                    {
+                      "type": "password",
+                      "label": "Password"
+                    },
+                    {
+                      "type": "checkbox",
+                      "label": "Remember me"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Button",
+                "props": {
+                  "text": "Sign in",
+                  "variant": "primary"
+                }
+              },
+              {
+                "type": "TEXT",
+                "name": "Forgot Password",
+                "style": "Small"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---dashboard",
+        "type": "CANVAS",
+        "name": "Company - Dashboard",
+        "children": [
+          {
+            "id": "frame-company/dashboard",
+            "name": "Company/Dashboard",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "Clients",
+                    "Estimates",
+                    "Jobs",
+                    "Schedule",
+                    "Invoices",
+                    "Settings"
+                  ]
+                }
+              },
+              {
+                "type": "GROUP",
+                "name": "Stats",
+                "children": [
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Total Clients",
+                      "value": "128",
+                      "subtitle": ""
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Active Jobs",
+                      "value": "14",
+                      "subtitle": ""
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Pending Estimates",
+                      "value": "6",
+                      "subtitle": ""
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Unpaid Invoices",
+                      "value": "$2,450",
+                      "subtitle": ""
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "GROUP",
+                "name": "Recents",
+                "children": [
+                  {
+                    "type": "INSTANCE",
+                    "component": "Table/Standard",
+                    "props": {
+                      "columns": [
+                        "Type",
+                        "Title",
+                        "Client",
+                        "Date",
+                        "Status"
+                      ],
+                      "rowsPreview": 3
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---clients",
+        "type": "CANVAS",
+        "name": "Company - Clients",
+        "children": [
+          {
+            "id": "frame-company/clients",
+            "name": "Company/Clients",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "Clients",
+                    "Estimates",
+                    "Jobs",
+                    "Schedule",
+                    "Invoices",
+                    "Settings"
+                  ]
+                }
+              },
+              {
+                "type": "GROUP",
+                "name": "Header",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "name": "Clients",
+                    "style": "H2"
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "+ Add Client",
+                      "variant": "primary"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Table/Standard",
+                "props": {
+                  "columns": [
+                    "Name",
+                    "Email",
+                    "Phone",
+                    "Address",
+                    "Status",
+                    "Actions"
+                  ],
+                  "rowsPreview": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---estimates",
+        "type": "CANVAS",
+        "name": "Company - Estimates",
+        "children": [
+          {
+            "id": "frame-company/estimates",
+            "name": "Company/Estimates",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "Clients",
+                    "Estimates",
+                    "Jobs",
+                    "Schedule",
+                    "Invoices",
+                    "Settings"
+                  ]
+                }
+              },
+              {
+                "type": "GROUP",
+                "name": "Header",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "name": "Estimates",
+                    "style": "H2"
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "+ Create Estimate",
+                      "variant": "primary"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Table/Standard",
+                "props": {
+                  "columns": [
+                    "Title",
+                    "Client",
+                    "Amount",
+                    "Status",
+                    "Date",
+                    "Actions"
+                  ],
+                  "rowsPreview": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---jobs",
+        "type": "CANVAS",
+        "name": "Company - Jobs",
+        "children": [
+          {
+            "id": "frame-company/jobs-(kanban)",
+            "name": "Company/Jobs (Kanban)",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "Clients",
+                    "Estimates",
+                    "Jobs",
+                    "Schedule",
+                    "Invoices",
+                    "Settings"
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Board/Kanban",
+                "props": {
+                  "columns": [
+                    "Pending",
+                    "In Progress",
+                    "Completed",
+                    "Cancelled"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---schedule",
+        "type": "CANVAS",
+        "name": "Company - Schedule",
+        "children": [
+          {
+            "id": "frame-company/schedule-(calendar)",
+            "name": "Company/Schedule (Calendar)",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "Clients",
+                    "Estimates",
+                    "Jobs",
+                    "Schedule",
+                    "Invoices",
+                    "Settings"
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Calendar/Monthly",
+                "props": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---invoices",
+        "type": "CANVAS",
+        "name": "Company - Invoices",
+        "children": [
+          {
+            "id": "frame-company/invoices",
+            "name": "Company/Invoices",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "Clients",
+                    "Estimates",
+                    "Jobs",
+                    "Schedule",
+                    "Invoices",
+                    "Settings"
+                  ]
+                }
+              },
+              {
+                "type": "GROUP",
+                "name": "Header",
+                "children": [
+                  {
+                    "type": "TEXT",
+                    "name": "Invoices",
+                    "style": "H2"
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "+ Create Invoice",
+                      "variant": "primary"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Table/Standard",
+                "props": {
+                  "columns": [
+                    "Invoice #",
+                    "Client",
+                    "Amount",
+                    "Status",
+                    "Due",
+                    "Paid",
+                    "Actions"
+                  ],
+                  "rowsPreview": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-company---settings",
+        "type": "CANVAS",
+        "name": "Company - Settings",
+        "children": [
+          {
+            "id": "frame-company/settings",
+            "name": "Company/Settings",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "Clients",
+                    "Estimates",
+                    "Jobs",
+                    "Schedule",
+                    "Invoices",
+                    "Settings"
+                  ]
+                }
+              },
+              {
+                "type": "GROUP",
+                "name": "Team Members",
+                "children": [
+                  {
+                    "type": "INSTANCE",
+                    "component": "Table/Standard",
+                    "props": {
+                      "columns": [
+                        "Name",
+                        "Email",
+                        "Role",
+                        "Actions"
+                      ],
+                      "rowsPreview": 3
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Button",
+                    "props": {
+                      "text": "+ Add Team Member",
+                      "variant": "secondary"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "GROUP",
+                "name": "Company Info",
+                "children": [
+                  {
+                    "type": "INSTANCE",
+                    "component": "Form/Standard",
+                    "props": {
+                      "title": "Company Information",
+                      "fields": [
+                        {
+                          "type": "text",
+                          "label": "Company Name"
+                        },
+                        {
+                          "type": "text",
+                          "label": "Address"
+                        },
+                        {
+                          "type": "text",
+                          "label": "Phone"
+                        },
+                        {
+                          "type": "email",
+                          "label": "Email"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-client---auth",
+        "type": "CANVAS",
+        "name": "Client - Auth",
+        "children": [
+          {
+            "id": "frame-client/login",
+            "name": "Client/Login",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "INSTANCE",
+                "component": "Logo/Brand",
+                "props": {
+                  "brand": "TaskSuite Pro"
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Form/Standard",
+                "props": {
+                  "title": "Client Portal Login",
+                  "fields": [
+                    {
+                      "type": "email",
+                      "label": "Email"
+                    },
+                    {
+                      "type": "password",
+                      "label": "Password"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Button",
+                "props": {
+                  "text": "Sign in",
+                  "variant": "primary"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-client---dashboard",
+        "type": "CANVAS",
+        "name": "Client - Dashboard",
+        "children": [
+          {
+            "id": "frame-client/dashboard",
+            "name": "Client/Dashboard",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "My Estimates",
+                    "My Jobs",
+                    "My Appointments",
+                    "My Invoices",
+                    "Profile"
+                  ]
+                }
+              },
+              {
+                "type": "GROUP",
+                "name": "Client Stats",
+                "children": [
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Pending Estimates",
+                      "value": "1",
+                      "subtitle": ""
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Active Jobs",
+                      "value": "1",
+                      "subtitle": ""
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Upcoming Appts",
+                      "value": "2",
+                      "subtitle": ""
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Card/Stat",
+                    "props": {
+                      "title": "Unpaid Invoices",
+                      "value": "$250",
+                      "subtitle": ""
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "GROUP",
+                "name": "Previews",
+                "children": [
+                  {
+                    "type": "INSTANCE",
+                    "component": "Table/Standard",
+                    "props": {
+                      "columns": [
+                        "Estimate",
+                        "Amount",
+                        "Status",
+                        "Date"
+                      ],
+                      "rowsPreview": 3
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Table/Standard",
+                    "props": {
+                      "columns": [
+                        "Job",
+                        "Status",
+                        "Next Appt"
+                      ],
+                      "rowsPreview": 3
+                    }
+                  },
+                  {
+                    "type": "INSTANCE",
+                    "component": "Table/Standard",
+                    "props": {
+                      "columns": [
+                        "Invoice",
+                        "Amount",
+                        "Status",
+                        "Due"
+                      ],
+                      "rowsPreview": 3
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-client---estimates",
+        "type": "CANVAS",
+        "name": "Client - Estimates",
+        "children": [
+          {
+            "id": "frame-client/estimates",
+            "name": "Client/Estimates",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "My Estimates",
+                    "My Jobs",
+                    "My Appointments",
+                    "My Invoices",
+                    "Profile"
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Table/Standard",
+                "props": {
+                  "columns": [
+                    "Title",
+                    "Amount",
+                    "Status",
+                    "Created",
+                    "Expires",
+                    "Actions"
+                  ],
+                  "rowsPreview": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-client---jobs",
+        "type": "CANVAS",
+        "name": "Client - Jobs",
+        "children": [
+          {
+            "id": "frame-client/jobs",
+            "name": "Client/Jobs",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "My Estimates",
+                    "My Jobs",
+                    "My Appointments",
+                    "My Invoices",
+                    "Profile"
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Table/Standard",
+                "props": {
+                  "columns": [
+                    "Job",
+                    "Status",
+                    "Assigned To",
+                    "Start",
+                    "ETA",
+                    "Actions"
+                  ],
+                  "rowsPreview": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-client---appointments",
+        "type": "CANVAS",
+        "name": "Client - Appointments",
+        "children": [
+          {
+            "id": "frame-client/appointments",
+            "name": "Client/Appointments",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "My Estimates",
+                    "My Jobs",
+                    "My Appointments",
+                    "My Invoices",
+                    "Profile"
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Calendar/Monthly",
+                "props": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-client---invoices",
+        "type": "CANVAS",
+        "name": "Client - Invoices",
+        "children": [
+          {
+            "id": "frame-client/invoices",
+            "name": "Client/Invoices",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "My Estimates",
+                    "My Jobs",
+                    "My Appointments",
+                    "My Invoices",
+                    "Profile"
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Table/Standard",
+                "props": {
+                  "columns": [
+                    "Invoice #",
+                    "Amount",
+                    "Status",
+                    "Due",
+                    "Actions"
+                  ],
+                  "rowsPreview": 3
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "page-client---profile",
+        "type": "CANVAS",
+        "name": "Client - Profile",
+        "children": [
+          {
+            "id": "frame-client/profile",
+            "name": "Client/Profile",
+            "type": "FRAME",
+            "absoluteBoundingBox": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 1024
+            },
+            "clipsContent": true,
+            "backgroundColor": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            },
+            "layoutMode": "VERTICAL",
+            "counterAxisSizingMode": "AUTO",
+            "primaryAxisSizingMode": "AUTO",
+            "itemSpacing": 24,
+            "paddingLeft": 24,
+            "paddingRight": 24,
+            "paddingTop": 24,
+            "paddingBottom": 24,
+            "children": [
+              {
+                "type": "COMPONENT",
+                "name": "Shell/SidebarLayout",
+                "props": {
+                  "sidebarWidth": 240,
+                  "navItems": [
+                    "Dashboard",
+                    "My Estimates",
+                    "My Jobs",
+                    "My Appointments",
+                    "My Invoices",
+                    "Profile"
+                  ]
+                }
+              },
+              {
+                "type": "INSTANCE",
+                "component": "Form/Standard",
+                "props": {
+                  "title": "Profile",
+                  "fields": [
+                    {
+                      "type": "text",
+                      "label": "Full Name"
+                    },
+                    {
+                      "type": "text",
+                      "label": "Phone"
+                    },
+                    {
+                      "type": "text",
+                      "label": "Address"
+                    },
+                    {
+                      "type": "password",
+                      "label": "Change Password"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "components": {
+    "cmp:0001": {
+      "key": "cmp-1",
+      "name": "Button",
+      "description": "Primary/Secondary/Ghost/Danger variants"
+    },
+    "cmp:0002": {
+      "key": "cmp-2",
+      "name": "Input/Textfield",
+      "description": "Standard text input"
+    },
+    "cmp:0003": {
+      "key": "cmp-3",
+      "name": "Select",
+      "description": "Dropdown"
+    },
+    "cmp:0004": {
+      "key": "cmp-4",
+      "name": "Card/Stat",
+      "description": "Summary stat card"
+    },
+    "cmp:0005": {
+      "key": "cmp-5",
+      "name": "Table/Standard",
+      "description": "Data table"
+    },
+    "cmp:0006": {
+      "key": "cmp-6",
+      "name": "Board/Kanban",
+      "description": "Kanban board"
+    },
+    "cmp:0007": {
+      "key": "cmp-7",
+      "name": "Calendar/Monthly",
+      "description": "Monthly calendar grid"
+    },
+    "cmp:0008": {
+      "key": "cmp-8",
+      "name": "Form/Standard",
+      "description": "Form layout with labels/inputs"
+    },
+    "cmp:0009": {
+      "key": "cmp-9",
+      "name": "Logo/Brand",
+      "description": "Brand lockup"
+    },
+    "cmp:0010": {
+      "key": "cmp-10",
+      "name": "Shell/SidebarLayout",
+      "description": "App layout with sidebar"
+    }
+  },
+  "styles": {
+    "h1": {
+      "name": "H1",
+      "style_type": "TEXT",
+      "description": "H1 text style",
+      "font_family": "Poppins",
+      "font_post_script_name": "Poppins-Bold",
+      "font_weight": "Bold",
+      "font_size": 32,
+      "line_height_percent_font_size": 120,
+      "letter_spacing": 0
+    },
+    "h2": {
+      "name": "H2",
+      "style_type": "TEXT",
+      "description": "H2 text style",
+      "font_family": "Poppins",
+      "font_post_script_name": "Poppins-Semibold",
+      "font_weight": "Semibold",
+      "font_size": 24,
+      "line_height_percent_font_size": 120,
+      "letter_spacing": 0
+    },
+    "h3": {
+      "name": "H3",
+      "style_type": "TEXT",
+      "description": "H3 text style",
+      "font_family": "Poppins",
+      "font_post_script_name": "Poppins-Semibold",
+      "font_weight": "Semibold",
+      "font_size": 20,
+      "line_height_percent_font_size": 120,
+      "letter_spacing": 0
+    },
+    "body": {
+      "name": "Body",
+      "style_type": "TEXT",
+      "description": "Body text style",
+      "font_family": "Poppins",
+      "font_post_script_name": "Poppins-Regular",
+      "font_weight": "Regular",
+      "font_size": 16,
+      "line_height_percent_font_size": 140,
+      "letter_spacing": 0
+    },
+    "small": {
+      "name": "Small",
+      "style_type": "TEXT",
+      "description": "Small text style",
+      "font_family": "Poppins",
+      "font_post_script_name": "Poppins-Regular",
+      "font_weight": "Regular",
+      "font_size": 14,
+      "line_height_percent_font_size": 140,
+      "letter_spacing": 0
+    },
+    "mono": {
+      "name": "Mono",
+      "style_type": "TEXT",
+      "description": "Mono text style",
+      "font_family": "JetBrains Mono",
+      "font_post_script_name": "JetBrains Mono-Regular",
+      "font_weight": "Regular",
+      "font_size": 13,
+      "line_height_percent_font_size": 140,
+      "letter_spacing": 0
+    },
+    "color_primary": {
+      "style_type": "FILL",
+      "description": "Primary color",
+      "color": {
+        "r": 0.050980392156862744,
+        "g": 0.5803921568627451,
+        "b": 0.5333333333333333,
+        "a": 1.0
+      }
+    },
+    "color_secondary": {
+      "style_type": "FILL",
+      "description": "Secondary color",
+      "color": {
+        "r": 0.1450980392156863,
+        "g": 0.38823529411764707,
+        "b": 0.9215686274509803,
+        "a": 1.0
+      }
+    },
+    "color_success": {
+      "style_type": "FILL",
+      "description": "Success color",
+      "color": {
+        "r": 0.08627450980392157,
+        "g": 0.6392156862745098,
+        "b": 0.2901960784313726,
+        "a": 1.0
+      }
+    },
+    "color_warning": {
+      "style_type": "FILL",
+      "description": "Warning color",
+      "color": {
+        "r": 0.9607843137254902,
+        "g": 0.6196078431372549,
+        "b": 0.043137254901960784,
+        "a": 1.0
+      }
+    },
+    "color_danger": {
+      "style_type": "FILL",
+      "description": "Danger color",
+      "color": {
+        "r": 0.8627450980392157,
+        "g": 0.14901960784313725,
+        "b": 0.14901960784313725,
+        "a": 1.0
+      }
+    },
+    "color_gray_900": {
+      "style_type": "FILL",
+      "description": "Gray 900",
+      "color": {
+        "r": 0.058823529411764705,
+        "g": 0.09019607843137255,
+        "b": 0.16470588235294117,
+        "a": 1.0
+      }
+    },
+    "color_gray_700": {
+      "style_type": "FILL",
+      "description": "Gray 700",
+      "color": {
+        "r": 0.2,
+        "g": 0.2549019607843137,
+        "b": 0.3333333333333333,
+        "a": 1.0
+      }
+    },
+    "color_gray_500": {
+      "style_type": "FILL",
+      "description": "Gray 500",
+      "color": {
+        "r": 0.39215686274509803,
+        "g": 0.4549019607843137,
+        "b": 0.5450980392156862,
+        "a": 1.0
+      }
+    },
+    "color_gray_300": {
+      "style_type": "FILL",
+      "description": "Gray 300",
+      "color": {
+        "r": 0.796078431372549,
+        "g": 0.8352941176470589,
+        "b": 0.8823529411764706,
+        "a": 1.0
+      }
+    },
+    "color_gray_100": {
+      "style_type": "FILL",
+      "description": "Gray 100",
+      "color": {
+        "r": 0.9450980392156862,
+        "g": 0.9607843137254902,
+        "b": 0.9764705882352941,
+        "a": 1.0
+      }
+    },
+    "elevation_card": {
+      "style_type": "EFFECT",
+      "description": "Card shadow",
+      "effect": {
+        "type": "DROP_SHADOW",
+        "visible": true,
+        "radius": 12,
+        "spread": 0,
+        "offset": {
+          "x": 0,
+          "y": 4
+        },
+        "color": {
+          "r": 0.0,
+          "g": 0.0,
+          "b": 0.0,
+          "a": 0.12
+        }
+      }
+    },
+    "radius_md": {
+      "style_type": "GRID",
+      "description": "Corner radius md",
+      "radius": 12
+    }
+  }
+}
+

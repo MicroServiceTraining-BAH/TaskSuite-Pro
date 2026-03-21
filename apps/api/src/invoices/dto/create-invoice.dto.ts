@@ -1,6 +1,7 @@
-import { IsString, IsNumber, IsDate, IsOptional, MinLength, Min } from "class-validator";
+import { IsString, IsNumber, IsDate, IsOptional, MinLength, Min, ValidateNested, IsArray, IsBoolean } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
+import { CreateInvoiceLineItemDto } from "./create-invoice-line-item.dto";
 
 export class CreateInvoiceDto {
   @ApiProperty({ example: "client-id" })
@@ -17,10 +18,17 @@ export class CreateInvoiceDto {
   @MinLength(1)
   invoiceNumber: string;
 
-  @ApiProperty({ example: 250.0 })
+  @ApiProperty({ example: 250.0, required: false })
+  @IsOptional()
   @IsNumber()
   @Min(0)
-  amount: number;
+  amount?: number; // Calculated from line items if provided
+
+  @ApiProperty({ example: 0.08, required: false, description: "Overall tax rate if not using per-item rates" })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  taxRate?: number;
 
   @ApiProperty({ example: "2024-02-15", required: false })
   @IsOptional()
@@ -32,6 +40,21 @@ export class CreateInvoiceDto {
   @IsString()
   status: string;
 
-  companyId: string; // Injected by controller
+  @ApiProperty({ type: [CreateInvoiceLineItemDto], required: false })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateInvoiceLineItemDto)
+  lineItems?: CreateInvoiceLineItemDto[];
+
+  @ApiProperty({ example: false, required: false, description: "Send email notification to client" })
+  @IsOptional()
+  @IsBoolean()
+  sendEmail?: boolean;
+
+  @ApiProperty({ example: false, required: false, description: "Send text message notification to client" })
+  @IsOptional()
+  @IsBoolean()
+  sendText?: boolean;
 }
 

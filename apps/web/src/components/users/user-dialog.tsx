@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@tasksuite/ui";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@tasksuite/ui";
 import { Button } from "@tasksuite/ui";
 import { Input } from "@tasksuite/ui";
 import { Label } from "@tasksuite/ui";
@@ -40,8 +40,8 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
     }
   }, [user, open]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const data: any = {
       email,
       name,
@@ -74,14 +74,18 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
         <DialogHeader>
           <DialogTitle>{user ? "Edit Team Member" : "Add Team Member"}</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-4 sm:px-6">
+            <div className="space-y-4 py-4">
+              <div>
             <Label htmlFor="email">Email *</Label>
             <Input
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(event.target.value)
+              }
               required
               disabled={!!user} // Can't change email after creation
             />
@@ -92,7 +96,9 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
               id="name"
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setName(event.target.value)
+              }
             />
           </div>
           <div>
@@ -103,7 +109,9 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(event.target.value)
+              }
               required={!user}
               minLength={6}
             />
@@ -126,15 +134,16 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
               </SelectContent>
             </Select>
           </div>
-          <div className="flex justify-end space-x-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit">{user ? "Update" : "Create"}</Button>
-          </div>
+            <Button type="submit" className="w-full sm:w-auto">{user ? "Update" : "Create"}</Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
 }
-

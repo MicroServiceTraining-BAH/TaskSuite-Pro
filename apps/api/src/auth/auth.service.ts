@@ -1,9 +1,10 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, UnauthorizedException, ConflictException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import { PrismaService } from "../prisma/prisma.service";
 import { LoginDto } from "./dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
+import { SignupDto } from "./dto/signup.dto";
 
 @Injectable()
 export class AuthService {
@@ -59,6 +60,64 @@ export class AuthService {
         companyId: user.companyId,
         companyName: user.company.name,
         role: user.role,
+      },
+    };
+  }
+
+  async signup(signupDto: SignupDto) {
+    const normalizedEmail = signupDto.email.trim().toLowerCase();
+    
+    // Check if user already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    });
+    
+    if (existingUser) {
+      throw new ConflictException("User with this email already exists");
+    }
+
+    const hashedPassword = await bcrypt.hash(signupDto.password, 10);
+
+    // Create company and owner user in a transaction
+    const result = await this.prisma.$transaction(async (tx) => {
+      // Create company
+      const company = await tx.company.create({
+        data: {
+          name: signupDto.companyName.trim(),
+        },
+      });
+
+      // Create owner user
+      const user = await tx.user.create({
+        data: {
+          email: normalizedEmail,
+          name: signupDto.name?.trim(),
+          password: hashedPassword,
+          companyId: company.id,
+          role: "owner",
+        },
+        include: { company: true },
+      });
+
+      return { company, user };
+    });
+
+    const payload = {
+      sub: result.user.id,
+      email: result.user.email,
+      companyId: result.user.companyId,
+      role: result.user.role,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        companyId: result.user.companyId,
+        companyName: result.user.company.name,
+        role: result.user.role,
       },
     };
   }
@@ -158,6 +217,7 @@ export class AuthService {
           email: client.email,
           name: client.name,
           companyId: client.companyId,
+          companyName: client.company.name,
         },
       };
     } catch (error) {
@@ -166,6 +226,19 @@ export class AuthService {
       }
       throw new UnauthorizedException("Login failed");
     }
+  }
+
+  async getCompany(companyId: string) {
+    return this.prisma.company.findUnique({
+      where: { id: companyId },
+    });
+  }
+
+  async getClientCompany(clientId: string) {
+    return this.prisma.client.findUnique({
+      where: { id: clientId },
+      include: { company: true },
+    });
   }
 }
 

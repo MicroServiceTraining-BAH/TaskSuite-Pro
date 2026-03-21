@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@tasksuite/ui", "@tasksuite/types"],
+  output: "standalone",
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -11,4 +12,3 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
-

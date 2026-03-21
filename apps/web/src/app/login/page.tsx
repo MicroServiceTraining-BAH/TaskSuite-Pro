@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/api";
 import { auth } from "@/lib/auth";
@@ -8,6 +9,7 @@ import { Button } from "@tasksuite/ui";
 import { Input } from "@tasksuite/ui";
 import { Label } from "@tasksuite/ui";
 import { Card } from "@tasksuite/ui";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -27,8 +29,8 @@ export default function LoginPage() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setError("");
     setLoading(true);
 
@@ -45,44 +47,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md p-6">
-        <h1 className="text-2xl font-bold mb-6">Login</h1>
+    <div className="min-h-screen flex items-center justify-center bg-muted/30">
+      <Card className="w-full max-w-md p-8 shadow-medium">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold tracking-tight mb-1">Welcome back</h1>
+          <p className="text-sm text-muted-foreground">Sign in to your TaskSuite Pro account</p>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 bg-red-100 text-red-700 rounded">{error}</div>
+            <div className="p-3 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg text-sm">{error}</div>
           )}
-          <div>
+          <div className="space-y-1.5">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
               required
             />
           </div>
-          <div>
+          <div className="space-y-1.5">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setPassword(event.target.value)
+              }
               required
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+          <Button type="submit" className="w-full mt-2" disabled={loading}>
+            {loading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
-        <div className="mt-4 text-center text-sm">
-          <a href="/client/login" className="text-blue-600 hover:underline">
-            Client Portal Login
-          </a>
+        <div className="mt-6 text-center text-sm space-y-2">
+          <div>
+            <span className="text-muted-foreground">Don&apos;t have an account? </span>
+            <Link href="/signup" className="text-primary font-medium hover:underline">
+              Sign up
+            </Link>
+          </div>
+          <div>
+            <Link href="/client/login" className="text-muted-foreground hover:text-primary transition-colors text-xs">
+              Client Portal Login →
+            </Link>
+          </div>
         </div>
-        <div className="mt-2 text-center text-xs text-gray-500">
-          Test: owner@cleaningco.com / password123
+        <div className="mt-4 text-center text-xs text-muted-foreground/60 border-t border-border pt-4">
+          Dev: owner@cleaningco.com / password123
         </div>
       </Card>
     </div>

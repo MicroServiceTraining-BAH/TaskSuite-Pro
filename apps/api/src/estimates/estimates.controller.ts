@@ -71,3 +71,32 @@ export class EstimatesController {
   }
 }
 
+// Public controller for viewing/approving estimates without authentication
+@ApiTags("estimates")
+@Controller("public/estimates")
+export class PublicEstimatesController {
+  constructor(private readonly estimatesService: EstimatesService) {}
+
+  @Get(":token")
+  @ApiOperation({ summary: "Get an estimate by public token (no auth required)" })
+  @ApiResponse({ status: 200, description: "Estimate details" })
+  @ApiResponse({ status: 404, description: "Estimate not found" })
+  findByToken(@Param("token") token: string) {
+    return this.estimatesService.findByPublicToken(token);
+  }
+
+  @Post(":token/approve")
+  @ApiOperation({ summary: "Approve an estimate by public token (no auth required)" })
+  @ApiResponse({ status: 200, description: "Estimate approved successfully" })
+  approve(@Param("token") token: string) {
+    return this.estimatesService.approveByToken(token);
+  }
+
+  @Post(":token/reject")
+  @ApiOperation({ summary: "Reject an estimate by public token (no auth required)" })
+  @ApiResponse({ status: 200, description: "Estimate rejected successfully" })
+  reject(@Param("token") token: string) {
+    return this.estimatesService.rejectByToken(token);
+  }
+}
+

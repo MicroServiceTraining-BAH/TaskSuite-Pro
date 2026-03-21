@@ -8,21 +8,23 @@
 
 ### User Journey
 
-#### Phase 1 (Current - No Authentication)
-1. **User opens browser** → Types URL or clicks link
-2. **Landing on Dashboard** → Sees overview cards
-3. **Company Selection** → Dropdown in navigation (top right)
-4. **Data Loading** → Sees company-specific data
-5. **CRUD Operations** → Can create, edit, delete records
-
-#### Phase 2 (With Authentication)
-1. **User visits** → `https://tasksuite-pro.vercel.app`
-2. **Redirected to Login** → If not authenticated
+#### Company User (Current - Phases 2, 3, 4 Implemented)
+1. **User visits** → `https://tasksuite-pro.vercel.app` or `http://localhost:3000`
+2. **Redirected to Login** → If not authenticated (`/login`)
 3. **Login Screen** → Email + Password
-4. **Authentication** → JWT token stored
+4. **Authentication** → JWT token stored in localStorage
 5. **Auto-redirect** → To dashboard
-6. **Company Auto-detected** → From user's companyId
+6. **Company Auto-detected** → From JWT token's companyId
 7. **Personalized Dashboard** → Shows their company's data only
+8. **Full Access** → Can manage clients, estimates, jobs, invoices, appointments, and team members
+
+#### Client Portal (Current - Phase 3 Implemented)
+1. **Client visits** → `http://localhost:3000/client/login`
+2. **Login Screen** → Email + Password (separate from company users)
+3. **Authentication** → JWT token stored in localStorage
+4. **Auto-redirect** → To `/client/dashboard`
+5. **Restricted Access** → Only sees their own estimates, jobs, invoices, and appointments
+6. **Read-Only Dashboard** → Cannot create or edit company data
 
 ## Features Users Can Access
 
@@ -57,9 +59,9 @@
 - See payment status
 
 ### Settings (`/settings`)
-- Account settings (Phase 2)
-- Company settings (Phase 2)
-- User preferences (Phase 2)
+- Team member management
+- Add/edit/remove company users
+- Assign roles (owner, admin, user)
 
 ## Multi-Company Scenarios
 
@@ -69,11 +71,11 @@
 - No company selector needed
 - Cannot access other companies' data
 
-### Scenario 2: Multi-Company User (Admin)
+### Scenario 2: Multi-Company User (Future)
 - User belongs to multiple companies
-- Logs in → Sees company selector
-- Can switch between companies
-- Each company's data is isolated
+- Would see company selector (not yet implemented)
+- Could switch between companies
+- Each company's data would be isolated
 
 ### Scenario 3: Company Owner
 - Owner of CleaningCo
@@ -83,18 +85,15 @@
 
 ## Security & Data Isolation
 
-### Current Implementation (Phase 1)
-- Company selection via dropdown
-- Company ID stored in localStorage
-- All API requests include `X-Company-Id` header
-- API filters all queries by companyId
-
-### Phase 2 Implementation
-- JWT authentication
-- User's companyId from JWT token
-- Automatic company detection
-- Role-based access control
-- Users cannot access other companies' data
+### Current Implementation (Phases 2, 3, 4)
+- JWT authentication for both company users and clients
+- User's companyId extracted from JWT token
+- Automatic company detection (no manual selection needed)
+- Client data isolation (clients only see their own records)
+- Company data isolation (users only see their company's data)
+- Password hashing with bcrypt
+- 7-day JWT token expiration
+- All authenticated routes protected with JWT guards
 
 ## Deployment Architecture
 

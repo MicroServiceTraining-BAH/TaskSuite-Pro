@@ -12,9 +12,7 @@ const config: Config = {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
+      screens: { "2xl": "1400px" },
     },
     extend: {
       colors: {
@@ -30,6 +28,14 @@ const config: Config = {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -51,11 +57,39 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-bg))",
+          fg: "hsl(var(--sidebar-fg))",
+          active: "hsl(var(--sidebar-active-bg))",
+          hover: "hsl(var(--sidebar-hover-bg))",
+          border: "hsl(var(--sidebar-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: "calc(var(--radius) / 2)",
+      },
+      spacing: {
+        sidebar: "240px",
+      },
+      fontFamily: {
+        sans: ["var(--font-inter)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        display: ["var(--font-poppins)", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
+      },
+      fontSize: {
+        "h1": ["30px", { lineHeight: "1.15", fontWeight: "700", letterSpacing: "-0.03em" }],
+        "h2": ["24px", { lineHeight: "1.2",  fontWeight: "600", letterSpacing: "-0.025em" }],
+        "h3": ["20px", { lineHeight: "1.25", fontWeight: "600", letterSpacing: "-0.02em" }],
+        "body": ["14px", { lineHeight: "1.6", fontWeight: "400" }],
+        "small": ["12px", { lineHeight: "1.5", fontWeight: "400" }],
+      },
+      boxShadow: {
+        "card":    "0 1px 2px rgba(30,48,140,0.04), 0 4px 12px rgba(30,48,140,0.07), 0 0 0 1px rgba(200,212,228,0.6)",
+        "card-md": "0 2px 4px rgba(30,48,140,0.05), 0 8px 24px rgba(30,48,140,0.10), 0 0 0 1px rgba(200,212,228,0.7)",
+        "card-lg": "0 4px 8px rgba(30,48,140,0.06), 0 16px 40px rgba(30,48,140,0.14), 0 0 0 1px rgba(200,212,228,0.8)",
+        "sidebar-pill": "0 2px 8px rgba(46,77,196,0.35)",
       },
       keyframes: {
         "accordion-down": {
@@ -77,4 +111,3 @@ const config: Config = {
 };
 
 export default config;
-

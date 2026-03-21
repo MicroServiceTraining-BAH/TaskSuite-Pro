@@ -21,7 +21,5 @@ export class CreateClientDto {
   @IsOptional()
   @IsString()
   address?: string | null;
-
-  companyId: string; // Injected by controller
 }
 

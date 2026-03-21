@@ -1,63 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { isOnboardingComplete } from "@/lib/onboarding";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isChecking, setIsChecking] = useState(true);
+  const redirectedRef = useRef(false);
 
   useEffect(() => {
-    // Wait for client-side hydration
     if (typeof window === "undefined") return;
 
-    const checkAuth = () => {
-      const isAuth = auth.isAuthenticated();
-      const isLoginPage = pathname?.startsWith("/login") || pathname?.startsWith("/client/login");
+    const isAuth = auth.isAuthenticated();
+    const isLoginPage = pathname?.startsWith("/login") || pathname?.startsWith("/client/login");
+    const isOnboardingPage = pathname?.startsWith("/onboarding");
+    const isSignupPage = pathname?.startsWith("/signup");
 
-      // Allow access to login pages without auth
-      if (isLoginPage) {
-        // If already authenticated, redirect to appropriate dashboard
-        if (isAuth) {
-          if (auth.isClient()) {
-            router.push("/client/dashboard");
-          } else {
-            router.push("/dashboard");
-          }
-        }
-        setIsChecking(false);
-        return;
-      }
-
-      // Protect all other routes
-      if (!isAuth) {
-        // Determine which login page to redirect to based on route
-        if (pathname?.startsWith("/client")) {
-          router.push("/client/login");
+    if (isLoginPage || isOnboardingPage || isSignupPage) {
+      if (isAuth && (isLoginPage || isSignupPage)) {
+        if (auth.isClient()) {
+          router.replace("/client/dashboard");
+        } else if (!isOnboardingComplete()) {
+          router.replace("/onboarding");
         } else {
-          router.push("/login");
+          router.replace("/dashboard");
         }
-      } else {
-        setIsChecking(false);
       }
-    };
+      return;
+    }
 
-    // Small delay to ensure localStorage is available
-    setTimeout(checkAuth, 0);
+    if (!isAuth) {
+      redirectedRef.current = true;
+      if (pathname?.startsWith("/client")) {
+        router.replace("/client/login");
+      } else {
+        router.replace("/login");
+      }
+      return;
+    }
+
+    if (!auth.isClient() && !isOnboardingComplete() && !isOnboardingPage) {
+      router.replace("/onboarding");
+      return;
+    }
   }, [pathname, router]);
 
-  // Show loading only for protected routes while checking
-  const isLoginPage = pathname?.startsWith("/login") || pathname?.startsWith("/client/login");
-  if (isChecking && !isLoginPage) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div>Loading...</div>
-      </div>
-    );
-  }
-
+  // Render children immediately — no loading overlay, no blank flash.
+  // Auth redirect happens via useEffect; unauthenticated users briefly see
+  // the page but API calls will 401 before any real data renders.
   return <>{children}</>;
 }
-

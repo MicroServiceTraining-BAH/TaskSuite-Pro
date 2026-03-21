@@ -12,68 +12,75 @@
 
 2. **Clients** (Customers) 
    - People who hire CleaningCo/FlooringCo (John Smith, Jane Doe, etc.)
-   - Access: **Currently NONE** - app is internal only
-   - Would need: Client Portal
+   - Access: **✅ Client Portal Implemented** (Phase 3)
+   - Login: Client email/password (separate from company users)
+   - Current URL: `http://localhost:3000/client/login`
 
-## Client Portal Concept
+## Client Portal (Implemented ✅)
 
-### How It Would Work:
+### How It Works:
 
 ```
 CleaningCo's customer "John Smith"
   ↓
-Receives email invitation or link
+Receives email notification (Phase 4) or direct link
   ↓
-Visits: https://tasksuite-pro.vercel.app/client
+Visits: http://localhost:3000/client/login
   ↓
 Logs in with email/password (separate from company users)
   ↓
 Sees ONLY their own:
-  - Estimates sent to them
-  - Jobs being worked on for them
-  - Appointments scheduled for them
-  - Invoices they need to pay
+  - ✅ Estimates sent to them
+  - ✅ Jobs being worked on for them
+  - ✅ Appointments scheduled for them
+  - ✅ Invoices they need to pay
   ↓
-Can:
-  - Accept/reject estimates
-  - View job progress
-  - See upcoming appointments
-  - Pay invoices online
-  - Message the company
+Can currently:
+  - ✅ View job progress (read-only)
+  - ✅ See upcoming appointments
+  - ✅ View estimates and invoices
+  - ✅ Accept/reject estimates via public link (no login required)
+  - 🔜 Pay invoices online (future)
+  - 🔜 Message the company (future)
 ```
 
-## Technical Implementation Needed
+## Technical Implementation (✅ Completed)
 
-### Database Changes:
+### Database Changes (✅ Done):
 ```prisma
 model Client {
-  id        String   @id @default(cuid())
-  companyId String
-  email     String?  // Would need to be unique for login
-  password  String?  // Hashed password for client portal
-  name      String
-  phone     String?
-  address   String?
+  id             String   @id @default(cuid())
+  companyId      String
+  email          String?  @unique // Unique for login
+  password       String?  // Hashed password for client portal
+  name           String
+  phone          String?
+  address        String?
   hasPortalAccess Boolean @default(false) // Can this client log in?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 ```
 
-### New Routes Needed:
-- `/client/login` - Client login page
-- `/client/dashboard` - Client's personal dashboard
-- `/client/estimates` - Only estimates sent to this client
-- `/client/jobs` - Only jobs for this client
-- `/client/invoices` - Only invoices for this client
-- `/client/profile` - Client profile/settings
+### Routes (✅ Implemented):
+- ✅ `/client/login` - Client login page
+- ✅ `/client/dashboard` - Client's personal dashboard
+- ✅ `/client/estimates` - Only estimates sent to this client
+- ✅ `/client/jobs` - Only jobs for this client
+- ✅ `/client/invoices` - Only invoices for this client
+- ✅ `/client/appointments` - Only appointments for this client
+- 🔜 `/client/profile` - Client profile/settings (future)
 
-### API Endpoints Needed:
-- `POST /auth/client/login` - Client authentication
-- `GET /client/estimates` - Filtered by clientId from JWT
-- `GET /client/jobs` - Filtered by clientId
-- `POST /client/estimates/:id/accept` - Client accepts estimate
-- `POST /client/invoices/:id/pay` - Client pays invoice
+### API Endpoints (✅ Implemented):
+- ✅ `POST /auth/client/login` - Client authentication
+- ✅ `GET /client/estimates` - Filtered by clientId from JWT
+- ✅ `GET /client/jobs` - Filtered by clientId
+- ✅ `GET /client/invoices` - Filtered by clientId
+- ✅ `GET /client/appointments` - Filtered by clientId
+- ✅ `GET /public/estimates/:token` - Public estimate view (no auth)
+- ✅ `POST /public/estimates/:token/approve` - Approve estimate (no auth)
+- ✅ `POST /public/estimates/:token/reject` - Reject estimate (no auth)
+- 🔜 `POST /client/invoices/:id/pay` - Client pays invoice (future)
 
 ## Access Levels Comparison
 
@@ -115,28 +122,29 @@ model Client {
    - Clicks to view estimate
    - Can accept or request changes
 
-## Implementation Priority
+## Implementation Status
 
-### Phase 1 (Current): ✅ DONE
+### Phase 1: ✅ DONE
 - Internal company dashboard
 - Multi-tenant company isolation
 
-### Phase 2: Company Authentication
-- Company users can log in
-- JWT authentication
-- Role-based permissions
+### Phase 2: Company Authentication ✅ DONE
+- ✅ Company users can log in
+- ✅ JWT authentication
+- ✅ Role-based permissions (stored, not enforced yet)
 
-### Phase 3: Client Portal (NEW)
-- Client authentication
-- Client-specific routes
-- Client can view their own data
-- Estimate acceptance workflow
-- Invoice payment integration
+### Phase 3: Client Portal ✅ DONE
+- ✅ Client authentication
+- ✅ Client-specific routes
+- ✅ Client can view their own data
+- ✅ Public estimate viewing and approval (no login required)
+- ✅ Estimate acceptance/rejection workflow
+- 🔜 Invoice payment integration (future)
 
-### Phase 4: Communication
-- Email notifications
-- In-app messaging
-- Status update emails
+### Phase 4: Communication ✅ DONE
+- ✅ Email notifications for estimates, jobs, invoices
+- 🔜 In-app messaging (future)
+- ✅ Status update emails
 
 ## Example Client Portal UI
 

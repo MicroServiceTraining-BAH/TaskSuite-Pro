@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { clientLogin } from "@/lib/api";
 import { auth } from "@/lib/auth";
@@ -27,20 +28,17 @@ export default function ClientLoginPage() {
     }
   }, [router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      console.log("Attempting login for:", email);
       const result = await clientLogin(email, password);
-      console.log("Login successful:", result);
       auth.login(result.access_token, result.client, true);
       router.push("/client/dashboard");
       router.refresh();
     } catch (err: any) {
-      console.error("Login error:", err);
       setError(err.message || "Login failed");
     } finally {
       setLoading(false);
@@ -48,47 +46,51 @@ export default function ClientLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md p-6">
-        <h1 className="text-2xl font-bold mb-6">Client Portal Login</h1>
+    <div className="min-h-screen flex items-center justify-center bg-muted/30">
+      <Card className="w-full max-w-md p-8 shadow-medium">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold tracking-tight mb-1">Client Portal</h1>
+          <p className="text-sm text-muted-foreground">Sign in to view your estimates, jobs, and invoices</p>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 bg-red-100 text-red-700 rounded">{error}</div>
+            <div className="p-3 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg text-sm">{error}</div>
           )}
-          <div>
+          <div className="space-y-1.5">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
               required
             />
           </div>
-          <div>
+          <div className="space-y-1.5">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setPassword(event.target.value)
+              }
               required
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+          <Button type="submit" className="w-full mt-2" disabled={loading}>
+            {loading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
-        <div className="mt-4 text-center text-sm">
-          <a href="/login" className="text-blue-600 hover:underline">
-            Company Login
+        <div className="mt-6 text-center border-t border-border pt-4">
+          <a href="/login" className="text-muted-foreground hover:text-primary transition-colors text-xs">
+            ← Company Staff Login
           </a>
         </div>
-        <div className="mt-2 text-center text-xs text-gray-500">
-          Test: john.smith@example.com / password123
+        <div className="mt-2 text-center text-xs text-muted-foreground/60">
+          Dev: john.smith@example.com / password123
         </div>
       </Card>
     </div>
   );
 }
-

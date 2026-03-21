@@ -6,7 +6,7 @@ import { Card } from "@tasksuite/ui";
 
 export default function ClientAppointmentsPage() {
   const [appointments, setAppointments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -20,11 +20,8 @@ export default function ClientAppointmentsPage() {
       }
     }
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (loading) {
-    return <div className="container mx-auto p-6">Loading...</div>;
-  }
 
   const now = new Date();
   const upcoming = appointments.filter((a) => new Date(a.startTime) > now);

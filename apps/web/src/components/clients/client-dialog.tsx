@@ -11,16 +11,17 @@ import {
 } from "@tasksuite/ui";
 import { Input } from "@tasksuite/ui";
 import { Label } from "@tasksuite/ui";
-import { Button } from "@tasksuite/ui";
+import { Button, Spinner } from "@tasksuite/ui";
 
 interface ClientDialogProps {
   open: boolean;
   onOpenChange: (_open: boolean) => void;
   client?: any;
   onSave: (data: any) => void;
+  saving?: boolean;
 }
 
-export function ClientDialog({ open, onOpenChange, client, onSave }: ClientDialogProps) {
+export function ClientDialog({ open, onOpenChange, client, onSave, saving = false }: ClientDialogProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -41,8 +42,8 @@ export function ClientDialog({ open, onOpenChange, client, onSave }: ClientDialo
     }
   }, [client, open]);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     onSave(formData);
   }
 
@@ -55,14 +56,17 @@ export function ClientDialog({ open, onOpenChange, client, onSave }: ClientDialo
             {client ? "Update client information" : "Create a new client"}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-4 sm:px-6">
+            <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label htmlFor="name">Name *</Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, name: event.target.value })
+                }
                 required
               />
             </div>
@@ -72,7 +76,9 @@ export function ClientDialog({ open, onOpenChange, client, onSave }: ClientDialo
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, email: event.target.value })
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -80,7 +86,9 @@ export function ClientDialog({ open, onOpenChange, client, onSave }: ClientDialo
               <Input
                 id="phone"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, phone: event.target.value })
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -88,19 +96,30 @@ export function ClientDialog({ open, onOpenChange, client, onSave }: ClientDialo
               <Input
                 id="address"
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setFormData({ ...formData, address: event.target.value })
+                }
               />
+            </div>
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
+            <Button type="submit" disabled={saving} className="w-full sm:w-auto">
+              {saving ? (
+                <>
+                  <Spinner size="sm" className="mr-2" />
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
   );
 }
-

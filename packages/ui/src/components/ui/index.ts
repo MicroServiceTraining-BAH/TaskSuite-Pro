@@ -30,4 +30,7 @@ export {
   SelectScrollUpButton,
   SelectScrollDownButton,
 } from "./select";
+export { Spinner } from "./spinner";
+export { LoadingState, LoadingPage } from "./loading-state";
+export { Checkbox } from "./checkbox";
 

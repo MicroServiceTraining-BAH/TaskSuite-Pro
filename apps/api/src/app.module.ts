@@ -14,6 +14,15 @@ import { MultiTenantModule } from "./multi-tenant/multi-tenant.module";
 import { HealthModule } from "./health/health.module";
 import { AuthModule } from "./auth/auth.module";
 import { EmailModule } from "./email/email.module";
+import { EstimateTemplatesModule } from "./estimate-templates/estimate-templates.module";
+import { InvoiceTemplatesModule } from "./invoice-templates/invoice-templates.module";
+import { AccountsModule } from "./accounts/accounts.module";
+import { ExpensesModule } from "./expenses/expenses.module";
+import { BillsModule } from "./bills/bills.module";
+import { ReportsModule } from "./reports/reports.module";
+import { TimeEntriesModule } from "./time-entries/time-entries.module";
+import { TaxRatesModule } from "./tax-rates/tax-rates.module";
+import { PaymentsModule } from "./payments/payments.module";
 
 @Module({
   imports: [
@@ -38,6 +47,15 @@ import { EmailModule } from "./email/email.module";
     HealthModule,
     AuthModule,
     EmailModule,
+    EstimateTemplatesModule,
+    InvoiceTemplatesModule,
+    AccountsModule,
+    ExpensesModule,
+    BillsModule,
+    ReportsModule,
+    TimeEntriesModule,
+    TaxRatesModule,
+    PaymentsModule,
   ],
   providers: [
     {
