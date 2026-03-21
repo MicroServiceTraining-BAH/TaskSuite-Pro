@@ -20,9 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@tasksuite/ui";
-import { getEstimateTemplates, getClients, getTaxRates } from "@/lib/api";
-import { CleaningEstimateBuilder } from "./cleaning-estimate-builder";
-import { FlooringEstimateBuilder } from "./flooring-estimate-builder";
+import { getEstimateTemplates, getClients, getTaxRates, getServiceTypes } from "@/lib/api";
+import { ServiceTypeEstimateBuilder } from "./service-type-estimate-builder";
 
 interface EstimateDialogProps {
   open: boolean;
@@ -46,7 +45,7 @@ export function EstimateDialog({
     amount: "",
     taxRate: "",
     status: "draft",
-    estimateType: "", // "cleaning" or "flooring"
+    serviceTypeId: "",
     sendEmail: false,
     sendText: false,
   });
@@ -59,16 +58,15 @@ export function EstimateDialog({
   const [useLineItems, setUseLineItems] = useState(false);
   const [templates, setTemplates] = useState<any[]>([]);
   const [clients, setClients] = useState<any[]>([]);
-  const [taxRates, setTaxRates] = useState<any[]>([]);
+  const [serviceTypes, setServiceTypes] = useState<any[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
-  const [metadata, setMetadata] = useState<any>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (open) {
       loadTemplates();
       loadClients();
-      loadTaxRates();
+      loadServiceTypes();
     }
   }, [open]);
 
@@ -81,7 +79,7 @@ export function EstimateDialog({
         amount: estimate.amount?.toString() || "",
         taxRate: estimate.taxRate?.toString() || "",
         status: estimate.status || "draft",
-        estimateType: estimate.estimateType || "",
+        serviceTypeId: estimate.serviceTypeId || "",
         sendEmail: false,
         sendText: false,
       });
@@ -97,7 +95,6 @@ export function EstimateDialog({
         setLineItems([]);
         setUseLineItems(false);
       }
-      setMetadata(estimate.metadata || null);
       setSelectedTemplateId("");
     } else {
       setFormData({
@@ -107,13 +104,12 @@ export function EstimateDialog({
         amount: "",
         taxRate: "",
         status: "draft",
-        estimateType: "",
+        serviceTypeId: "",
         sendEmail: false,
         sendText: false,
       });
       setLineItems([]);
       setUseLineItems(false);
-      setMetadata(null);
       setSelectedTemplateId("");
     }
     setErrors({});
@@ -137,12 +133,12 @@ export function EstimateDialog({
     }
   }
 
-  async function loadTaxRates() {
+  async function loadServiceTypes() {
     try {
-      const data = await getTaxRates(true);
-      setTaxRates(data as any[]);
+      const data = await getServiceTypes();
+      setServiceTypes((data as any[]).filter((st: any) => st.isActive));
     } catch (error) {
-      console.error("Failed to load tax rates:", error);
+      console.error("Failed to load service types:", error);
     }
   }
 
@@ -194,12 +190,13 @@ export function EstimateDialog({
     }
   }
 
+  const selectedServiceType = serviceTypes.find((st) => st.id === formData.serviceTypeId);
+
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const errs: Record<string, string> = {};
     if (!formData.clientId) errs.clientId = "Please select a client";
     if (!formData.title.trim()) errs.title = "Title is required";
-    if (!formData.estimateType) errs.estimateType = "Please select a service type";
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
@@ -208,6 +205,8 @@ export function EstimateDialog({
     const submitData: any = {
       ...formData,
       taxRate: parseFloat(formData.taxRate) || 0,
+      // Keep serviceTypeId or remove if empty
+      serviceTypeId: formData.serviceTypeId || undefined,
     };
 
     if (useLineItems && lineItems.length > 0) {
@@ -222,11 +221,6 @@ export function EstimateDialog({
       submitData.amount = parseFloat(formData.amount) || 0;
     }
 
-    // Include metadata if available
-    if (metadata) {
-      submitData.metadata = metadata;
-    }
-
     onSave(submitData);
   }
 
@@ -236,12 +230,13 @@ export function EstimateDialog({
         <DialogHeader>
           <DialogTitle>{estimate ? "Edit Estimate" : "Create Estimate"}</DialogTitle>
           <DialogDescription>
-            {estimate ? "Update estimate information" : "Create a new estimate from a template or from scratch"}
+            {estimate ? "Update estimate information" : "Create a new estimate"}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-4 sm:px-6">
             <div className="grid gap-6 py-6">
+
             {!estimate && templates.length > 0 && (
               <div className="grid gap-3">
                 <Label htmlFor="template" className="text-base">Template (Optional)</Label>
@@ -260,8 +255,11 @@ export function EstimateDialog({
                 </Select>
               </div>
             )}
+
             <div className="grid gap-3">
-              <Label htmlFor="clientId" className="text-base font-medium">Client <span className="text-destructive">*</span></Label>
+              <Label htmlFor="clientId" className="text-base font-medium">
+                Client <span className="text-destructive">*</span>
+              </Label>
               <Select
                 value={formData.clientId}
                 onValueChange={(value) => {
@@ -282,8 +280,11 @@ export function EstimateDialog({
               </Select>
               {errors.clientId && <p className="text-sm text-destructive">{errors.clientId}</p>}
             </div>
+
             <div className="grid gap-3">
-              <Label htmlFor="title" className="text-base font-medium">Title <span className="text-destructive">*</span></Label>
+              <Label htmlFor="title" className="text-base font-medium">
+                Title <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="title"
                 value={formData.title}
@@ -295,28 +296,41 @@ export function EstimateDialog({
               />
               {errors.title && <p className="text-sm text-destructive">{errors.title}</p>}
             </div>
+
+            {/* Service Type — dynamic from company */}
             <div className="grid gap-3">
-              <Label htmlFor="estimateType" className="text-base font-medium">Service Type <span className="text-destructive">*</span></Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="serviceTypeId" className="text-base font-medium">Service Type</Label>
+                {serviceTypes.length === 0 && (
+                  <a href="/settings/service-types" className="text-xs text-primary hover:underline">
+                    + Create service types
+                  </a>
+                )}
+              </div>
               <Select
-                value={formData.estimateType}
+                value={formData.serviceTypeId || "none"}
                 onValueChange={(value) => {
-                  setFormData({ ...formData, estimateType: value });
-                  setUseLineItems(false);
+                  const stId = value === "none" ? "" : value;
+                  setFormData({ ...formData, serviceTypeId: stId });
+                  // Reset line items when service type changes
                   setLineItems([]);
-                  setMetadata(null);
-                  if (errors.estimateType) setErrors({ ...errors, estimateType: "" });
+                  setUseLineItems(false);
                 }}
               >
-                <SelectTrigger id="estimateType" aria-invalid={!!errors.estimateType}>
-                  <SelectValue placeholder="Select service type" />
+                <SelectTrigger id="serviceTypeId">
+                  <SelectValue placeholder="Select service type (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cleaning">Cleaning Service</SelectItem>
-                  <SelectItem value="flooring">Flooring Installation</SelectItem>
+                  <SelectItem value="none">None (manual pricing)</SelectItem>
+                  {serviceTypes.map((st) => (
+                    <SelectItem key={st.id} value={st.id}>
+                      {st.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
-              {errors.estimateType && <p className="text-sm text-destructive">{errors.estimateType}</p>}
             </div>
+
             <div className="grid gap-3">
               <Label htmlFor="description" className="text-base font-medium">Description</Label>
               <Input
@@ -328,159 +342,176 @@ export function EstimateDialog({
               />
             </div>
 
-            {formData.estimateType === "cleaning" && (
-              <CleaningEstimateBuilder
-                onUpdate={(data) => {
-                  setFormData({ ...formData, amount: data.amount.toString() });
-                  setLineItems(data.lineItems.map((item: any) => ({
-                    description: item.description,
-                    quantity: item.quantity.toString(),
-                    unitPrice: item.unitPrice.toString(),
-                    taxRate: "",
-                  })));
-                  setUseLineItems(true);
-                  setMetadata(data.metadata || null);
-                }}
-                initialData={estimate?.estimateType === "cleaning" && estimate?.metadata ? estimate.metadata : undefined}
-              />
-            )}
-
-            {formData.estimateType === "flooring" && (
-              <FlooringEstimateBuilder
-                onUpdate={(data) => {
-                  setFormData({ ...formData, amount: data.amount.toString() });
-                  setLineItems(data.lineItems.map((item: any) => ({
-                    description: item.description,
-                    quantity: item.quantity.toString(),
-                    unitPrice: item.unitPrice.toString(),
-                    taxRate: "",
-                  })));
-                  setUseLineItems(true);
-                  setMetadata(data.metadata || null);
-                }}
-                initialData={estimate?.estimateType === "flooring" && estimate?.metadata ? estimate.metadata : undefined}
-              />
-            )}
-
-            {!formData.estimateType && (
+            {/* If service type selected and has pricing items, show the builder */}
+            {selectedServiceType && (selectedServiceType.pricingItems || []).length > 0 && (
               <div className="grid gap-3">
-                <div className="flex items-center gap-3">
-                  <input
-                    type="checkbox"
-                    id="useLineItems"
-                    checked={useLineItems}
-                    onChange={(e) => setUseLineItems(e.target.checked)}
-                    className="rounded"
-                  />
-                  <Label htmlFor="useLineItems">Use line items</Label>
-                </div>
+                <Label className="text-base font-medium">
+                  Select Items — {selectedServiceType.name}
+                </Label>
+                <ServiceTypeEstimateBuilder
+                  pricingItems={selectedServiceType.pricingItems || []}
+                  onUpdate={(data) => {
+                    setFormData({ ...formData, amount: data.amount.toString() });
+                    setLineItems(data.lineItems.map((item: any) => ({
+                      description: item.name,
+                      quantity: item.quantity.toString(),
+                      unitPrice: item.unitPrice.toString(),
+                      taxRate: "",
+                    })));
+                    setUseLineItems(true);
+                  }}
+                  initialSelected={
+                    estimate?.lineItems?.map((li: any) => ({
+                      id: li.id,
+                      name: li.description,
+                      unitPrice: li.unitPrice,
+                      quantity: li.quantity,
+                    })) || []
+                  }
+                />
               </div>
             )}
 
-            {useLineItems ? (
-              <div className="grid gap-6 border rounded-lg p-6">
-                <div className="flex justify-between items-center">
-                  <Label className="text-base font-semibold">Line Items</Label>
-                  <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
-                    + Add Item
-                  </Button>
-                </div>
-                {lineItems.map((item, index) => (
-                  <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
-                    <div className="col-span-1 sm:col-span-4">
-                      <Label>Description</Label>
-                      <Input
-                        value={item.description}
-                        onChange={(e) => updateLineItem(index, "description", e.target.value)}
-                        placeholder="Item description"
-                        required
-                      />
-                    </div>
-                    <div className="col-span-1 sm:col-span-2">
-                      <Label>Qty</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={item.quantity}
-                        onChange={(e) => updateLineItem(index, "quantity", e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-span-1 sm:col-span-2">
-                      <Label>Unit Price</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={item.unitPrice}
-                        onChange={(e) => updateLineItem(index, "unitPrice", e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="col-span-1 sm:col-span-2">
-                      <Label>Tax Rate</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={item.taxRate}
-                        onChange={(e) => updateLineItem(index, "taxRate", e.target.value)}
-                        placeholder="0.08"
-                      />
-                    </div>
-                    <div className="col-span-1 sm:col-span-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeLineItem(index)}
-                        className="w-full sm:w-auto"
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                {lineItems.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-6">
-                    No line items. Click "Add Item" to add one.
-                  </p>
-                )}
-                <div className="border-t pt-4 mt-2">
-                  <div className="flex justify-between font-semibold text-base">
-                    <span>Total:</span>
-                    <span>${calculateTotal().toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
+            {/* Manual pricing section — shown when no service type or service type has no items */}
+            {(!selectedServiceType || (selectedServiceType.pricingItems || []).length === 0) && (
               <>
                 <div className="grid gap-3">
-                  <Label htmlFor="amount" className="text-base font-medium">Amount *</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    value={formData.amount}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({ ...formData, amount: event.target.value })
-                    }
-                    required
-                  />
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="useLineItems"
+                      checked={useLineItems}
+                      onChange={(e) => setUseLineItems(e.target.checked)}
+                      className="rounded"
+                    />
+                    <Label htmlFor="useLineItems">Use line items</Label>
+                  </div>
                 </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="taxRate" className="text-base font-medium">Tax Rate (optional)</Label>
-                  <Input
-                    id="taxRate"
-                    type="number"
-                    step="0.01"
-                    value={formData.taxRate}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({ ...formData, taxRate: event.target.value })
-                    }
-                    placeholder="0.08 for 8%"
-                  />
-                </div>
+
+                {useLineItems ? (
+                  <div className="grid gap-6 border rounded-lg p-6">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-base font-semibold">Line Items</Label>
+                      <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
+                        + Add Item
+                      </Button>
+                    </div>
+                    {lineItems.map((item, index) => (
+                      <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                        <div className="col-span-1 sm:col-span-4">
+                          <Label>Description</Label>
+                          <Input
+                            value={item.description}
+                            onChange={(e) => updateLineItem(index, "description", e.target.value)}
+                            placeholder="Item description"
+                            required
+                          />
+                        </div>
+                        <div className="col-span-1 sm:col-span-2">
+                          <Label>Qty</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={item.quantity}
+                            onChange={(e) => updateLineItem(index, "quantity", e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="col-span-1 sm:col-span-2">
+                          <Label>Unit Price</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={item.unitPrice}
+                            onChange={(e) => updateLineItem(index, "unitPrice", e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="col-span-1 sm:col-span-2">
+                          <Label>Tax Rate</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={item.taxRate}
+                            onChange={(e) => updateLineItem(index, "taxRate", e.target.value)}
+                            placeholder="0.08"
+                          />
+                        </div>
+                        <div className="col-span-1 sm:col-span-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeLineItem(index)}
+                            className="w-full sm:w-auto"
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {lineItems.length === 0 && (
+                      <p className="text-sm text-muted-foreground text-center py-6">
+                        No line items. Click "Add Item" to add one.
+                      </p>
+                    )}
+                    <div className="border-t pt-4 mt-2">
+                      <div className="flex justify-between font-semibold text-base">
+                        <span>Total:</span>
+                        <span>${calculateTotal().toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid gap-3">
+                      <Label htmlFor="amount" className="text-base font-medium">Amount *</Label>
+                      <Input
+                        id="amount"
+                        type="number"
+                        step="0.01"
+                        value={formData.amount}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                          setFormData({ ...formData, amount: event.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="taxRate" className="text-base font-medium">Tax Rate (optional)</Label>
+                      <Input
+                        id="taxRate"
+                        type="number"
+                        step="0.01"
+                        value={formData.taxRate}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                          setFormData({ ...formData, taxRate: event.target.value })
+                        }
+                        placeholder="0.08 for 8%"
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
+
+            {/* Estimated total when service type builder is active */}
+            {selectedServiceType && (selectedServiceType.pricingItems || []).length > 0 && (
+              <div className="grid gap-3">
+                <Label htmlFor="taxRate" className="text-base font-medium">Tax Rate (optional)</Label>
+                <Input
+                  id="taxRate"
+                  type="number"
+                  step="0.01"
+                  value={formData.taxRate}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setFormData({ ...formData, taxRate: event.target.value })
+                  }
+                  placeholder="0.08 for 8%"
+                />
+              </div>
+            )}
+
             <div className="grid gap-3">
               <Label htmlFor="status" className="text-base font-medium">Status</Label>
               <Select
@@ -498,6 +529,7 @@ export function EstimateDialog({
                 </SelectContent>
               </Select>
             </div>
+
             {!estimate && (
               <div className="grid gap-4 pt-2 border-t">
                 <Label className="text-base font-medium">Notifications</Label>
@@ -551,4 +583,3 @@ export function EstimateDialog({
     </Dialog>
   );
 }
-

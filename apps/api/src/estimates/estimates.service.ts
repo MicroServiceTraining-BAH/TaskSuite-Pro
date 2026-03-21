@@ -63,6 +63,7 @@ export class EstimatesService {
         taxRate,
         status: createEstimateDto.status,
         estimateType: createEstimateDto.estimateType,
+        serviceTypeId: createEstimateDto.serviceTypeId || null,
         metadata: createEstimateDto.metadata || null,
         publicToken,
         companyId,

@@ -31,6 +31,7 @@ model Company {
   estimateLineItems      EstimateLineItem[]
   timeEntries            TimeEntry[]
   taxRates               TaxRate[]
+  serviceTypes           ServiceType[]
   payments               Payment[]
   jobPhotos              JobPhoto[]
   cleaningChecklistItems CleaningChecklistItem[]
@@ -79,16 +80,18 @@ model Estimate {
   amount       Float // Calculated from line items
   taxRate      Float    @default(0) // Overall tax rate if not per-item
   status       String   @default("draft")
-  estimateType String? // "cleaning" or "flooring"
-  metadata     Json? // Builder-specific data (rooms, addons, materials, etc.)
+  estimateType  String? // "cleaning" or "flooring"
+  serviceTypeId String?  // Optional reference to custom ServiceType
+  metadata      Json? // Builder-specific data (rooms, addons, materials, etc.)
   publicToken  String?  @unique // Public token for viewing/approving without login
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  company   Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  client    Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  jobs      Job[]
-  lineItems EstimateLineItem[]
+  company     Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client      Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  serviceType ServiceType?        @relation(fields: [serviceTypeId], references: [id], onDelete: SetNull)
+  jobs        Job[]
+  lineItems   EstimateLineItem[]
 }
 
 model Job {
@@ -182,6 +185,20 @@ model InvoiceTemplate {
   updatedAt     DateTime @updatedAt
 
   company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model ServiceType {
+  id           String   @id @default(cuid())
+  companyId    String
+  name         String
+  description  String?
+  pricingItems Json?    // Array of {id, name, price}
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company   Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  estimates Estimate[]
 }
 
 // Chart of Accounts - Categorize income and expenses

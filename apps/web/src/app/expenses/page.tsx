@@ -3,6 +3,22 @@
 import { useState, useEffect } from "react";
 import { Button } from "@tasksuite/ui";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@tasksuite/ui";
+import { Input } from "@tasksuite/ui";
+import { Label } from "@tasksuite/ui";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@tasksuite/ui";
+import {
   Table,
   TableBody,
   TableCell,
@@ -12,13 +28,14 @@ import {
 } from "@tasksuite/ui";
 import { getExpenses, createExpense, updateExpense, deleteExpense, getAccounts } from "@/lib/api";
 import { SearchBar } from "@/components/search-bar";
+import Link from "next/link";
 
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useState<any[]>([]);
   const [allExpenses, setAllExpenses] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [accounts, setAccounts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<any>(null);
 
@@ -47,17 +64,13 @@ export default function ExpensesPage() {
       setExpenses(data);
       return;
     }
-    
     const lowerQuery = query.toLowerCase();
-    const filtered = data.filter((expense) => {
-      return (
-        expense.description?.toLowerCase().includes(lowerQuery) ||
-        expense.vendor?.toLowerCase().includes(lowerQuery) ||
-        expense.amount?.toString().includes(lowerQuery) ||
-        expense.paymentMethod?.toLowerCase().includes(lowerQuery)
-      );
-    });
-    setExpenses(filtered);
+    setExpenses(data.filter((expense) =>
+      expense.description?.toLowerCase().includes(lowerQuery) ||
+      expense.vendor?.toLowerCase().includes(lowerQuery) ||
+      expense.amount?.toString().includes(lowerQuery) ||
+      expense.paymentMethod?.toLowerCase().includes(lowerQuery)
+    ));
   }
 
   useEffect(() => {
@@ -75,9 +88,8 @@ export default function ExpensesPage() {
       await loadData();
       setIsDialogOpen(false);
       setEditingExpense(null);
-    } catch (error) {
-      console.error("Failed to save expense:", error);
-      alert("Failed to save expense");
+    } catch (error: any) {
+      alert(error.message || "Failed to save expense");
     }
   }
 
@@ -87,10 +99,11 @@ export default function ExpensesPage() {
       await deleteExpense(id);
       await loadData();
     } catch (error) {
-      console.error("Failed to delete expense:", error);
       alert("Failed to delete expense");
     }
   }
+
+  const expenseAccounts = accounts.filter((a) => a.type === "expense");
 
   return (
     <div className="container mx-auto p-6">
@@ -100,6 +113,16 @@ export default function ExpensesPage() {
           + Add Expense
         </Button>
       </div>
+
+      {accounts.length === 0 && !loading && (
+        <div className="mb-4 p-4 border border-amber-200 bg-amber-50 rounded-lg text-sm text-amber-800">
+          <strong>No accounts found.</strong> You can still log expenses, but for proper categorization{" "}
+          <Link href="/accounts" className="underline font-medium hover:text-amber-900">
+            create expense accounts
+          </Link>{" "}
+          first.
+        </div>
+      )}
 
       <div className="mb-4">
         <SearchBar
@@ -123,9 +146,15 @@ export default function ExpensesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {expenses.length === 0 ? (
+            {loading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : expenses.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No expenses found
                 </TableCell>
               </TableRow>
@@ -135,9 +164,17 @@ export default function ExpensesPage() {
                   <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
                   <TableCell>{expense.description}</TableCell>
                   <TableCell>{expense.vendor || "-"}</TableCell>
-                  <TableCell>{expense.account?.name || "Uncategorized"}</TableCell>
-                  <TableCell>${expense.amount.toFixed(2)}</TableCell>
-                  <TableCell>{expense.paymentMethod || "-"}</TableCell>
+                  <TableCell>
+                    <span className={expense.account ? "" : "text-muted-foreground text-sm"}>
+                      {expense.account?.name || "Uncategorized"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="font-medium">${expense.amount.toFixed(2)}</TableCell>
+                  <TableCell>
+                    {expense.paymentMethod
+                      ? expense.paymentMethod.replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())
+                      : "-"}
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="outline"
@@ -165,9 +202,9 @@ export default function ExpensesPage() {
       {isDialogOpen && (
         <ExpenseDialog
           open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
+          onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setEditingExpense(null); }}
           expense={editingExpense}
-          accounts={accounts}
+          accounts={expenseAccounts}
           onSave={handleSave}
         />
       )}
@@ -181,10 +218,12 @@ function ExpenseDialog({ open, onOpenChange, expense, accounts, onSave }: any) {
     vendor: "",
     amount: "",
     accountId: "",
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split("T")[0],
     paymentMethod: "",
     notes: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (expense) {
@@ -193,7 +232,9 @@ function ExpenseDialog({ open, onOpenChange, expense, accounts, onSave }: any) {
         vendor: expense.vendor || "",
         amount: expense.amount?.toString() || "",
         accountId: expense.accountId || "",
-        date: expense.date ? new Date(expense.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        date: expense.date
+          ? new Date(expense.date).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
         paymentMethod: expense.paymentMethod || "",
         notes: expense.notes || "",
       });
@@ -203,104 +244,146 @@ function ExpenseDialog({ open, onOpenChange, expense, accounts, onSave }: any) {
         vendor: "",
         amount: "",
         accountId: "",
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split("T")[0],
         paymentMethod: "",
         notes: "",
       });
     }
+    setErrors({});
   }, [expense, open]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onSave({
-      ...formData,
-      amount: parseFloat(formData.amount) || 0,
-    });
+    const errs: Record<string, string> = {};
+    if (!formData.description.trim()) errs.description = "Description is required";
+    if (!formData.amount) errs.amount = "Amount is required";
+    else if (isNaN(parseFloat(formData.amount)) || parseFloat(formData.amount) < 0) errs.amount = "Enter a valid amount";
+    if (!formData.date) errs.date = "Date is required";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+
+    setSaving(true);
+    try {
+      await onSave({
+        ...formData,
+        amount: parseFloat(formData.amount) || 0,
+        accountId: formData.accountId || undefined,
+        paymentMethod: formData.paymentMethod || undefined,
+      });
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
-    <div className={`fixed inset-0 bg-black/50 flex items-center justify-center z-50 ${open ? "" : "hidden"}`}>
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">{expense ? "Edit Expense" : "Add Expense"}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Description *</label>
-            <input
-              type="text"
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{expense ? "Edit Expense" : "Add Expense"}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description <span className="text-destructive">*</span></Label>
+            <Input
+              id="description"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
+              onChange={(e) => { setFormData({ ...formData, description: e.target.value }); if (errors.description) setErrors({ ...errors, description: "" }); }}
+              aria-invalid={!!errors.description}
             />
+            {errors.description && <p className="text-sm text-destructive">{errors.description}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Vendor</label>
-            <input
-              type="text"
+
+          <div className="grid gap-2">
+            <Label htmlFor="vendor">Vendor</Label>
+            <Input
+              id="vendor"
               value={formData.vendor}
               onChange={(e) => setFormData({ ...formData, vendor: e.target.value })}
-              className="w-full border rounded px-3 py-2"
+              placeholder="e.g. Office Depot"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Amount *</label>
-            <input
+
+          <div className="grid gap-2">
+            <Label htmlFor="amount">Amount <span className="text-destructive">*</span></Label>
+            <Input
+              id="amount"
               type="number"
               step="0.01"
+              min="0"
               value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
+              onChange={(e) => { setFormData({ ...formData, amount: e.target.value }); if (errors.amount) setErrors({ ...errors, amount: "" }); }}
+              aria-invalid={!!errors.amount}
             />
+            {errors.amount && <p className="text-sm text-destructive">{errors.amount}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Account</label>
-            <select
-              value={formData.accountId}
-              onChange={(e) => setFormData({ ...formData, accountId: e.target.value })}
-              className="w-full border rounded px-3 py-2"
+
+          <div className="grid gap-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="accountId">Account</Label>
+              {accounts.length === 0 && (
+                <a href="/accounts" className="text-xs text-primary hover:underline">
+                  + Create accounts
+                </a>
+              )}
+            </div>
+            <Select
+              value={formData.accountId || "none"}
+              onValueChange={(value) => setFormData({ ...formData, accountId: value === "none" ? "" : value })}
             >
-              <option value="">Select account...</option>
-              {accounts.filter((a: any) => a.type === 'expense').map((account: any) => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger id="accountId">
+                <SelectValue placeholder="Select account..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Uncategorized</SelectItem>
+                {accounts.map((account: any) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    {account.code ? `${account.code} - ` : ""}{account.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Date *</label>
-            <input
+
+          <div className="grid gap-2">
+            <Label htmlFor="date">Date <span className="text-destructive">*</span></Label>
+            <Input
+              id="date"
               type="date"
               value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
+              onChange={(e) => { setFormData({ ...formData, date: e.target.value }); if (errors.date) setErrors({ ...errors, date: "" }); }}
+              aria-invalid={!!errors.date}
             />
+            {errors.date && <p className="text-sm text-destructive">{errors.date}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Payment Method</label>
-            <select
-              value={formData.paymentMethod}
-              onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-              className="w-full border rounded px-3 py-2"
+
+          <div className="grid gap-2">
+            <Label htmlFor="paymentMethod">Payment Method</Label>
+            <Select
+              value={formData.paymentMethod || "none"}
+              onValueChange={(value) => setFormData({ ...formData, paymentMethod: value === "none" ? "" : value })}
             >
-              <option value="">Select method...</option>
-              <option value="cash">Cash</option>
-              <option value="check">Check</option>
-              <option value="credit_card">Credit Card</option>
-              <option value="bank_transfer">Bank Transfer</option>
-            </select>
+              <SelectTrigger id="paymentMethod">
+                <SelectValue placeholder="Select method..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Not specified</SelectItem>
+                <SelectItem value="cash">Cash</SelectItem>
+                <SelectItem value="check">Check</SelectItem>
+                <SelectItem value="credit_card">Credit Card</SelectItem>
+                <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex gap-2 justify-end">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
-          </div>
+            <Button type="submit" disabled={saving}>
+              {saving ? "Saving..." : "Save"}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
-

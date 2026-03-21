@@ -99,6 +99,22 @@ export class AuthService {
         include: { company: true },
       });
 
+      // Seed a basic chart of accounts for the new company
+      await tx.account.createMany({
+        data: [
+          { companyId: company.id, name: 'Service Revenue', type: 'income', code: '4000' },
+          { companyId: company.id, name: 'Other Income', type: 'income', code: '4100' },
+          { companyId: company.id, name: 'Office Supplies', type: 'expense', code: '5000' },
+          { companyId: company.id, name: 'Equipment', type: 'expense', code: '5100' },
+          { companyId: company.id, name: 'Vehicle Expenses', type: 'expense', code: '5200' },
+          { companyId: company.id, name: 'Payroll', type: 'expense', code: '5300' },
+          { companyId: company.id, name: 'Marketing', type: 'expense', code: '5400' },
+          { companyId: company.id, name: 'Cash', type: 'asset', code: '1000' },
+          { companyId: company.id, name: 'Accounts Receivable', type: 'asset', code: '1100' },
+          { companyId: company.id, name: 'Accounts Payable', type: 'liability', code: '2000' },
+        ],
+      });
+
       return { company, user };
     });
 

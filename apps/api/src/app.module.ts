@@ -23,6 +23,7 @@ import { ReportsModule } from "./reports/reports.module";
 import { TimeEntriesModule } from "./time-entries/time-entries.module";
 import { TaxRatesModule } from "./tax-rates/tax-rates.module";
 import { PaymentsModule } from "./payments/payments.module";
+import { ServiceTypesModule } from "./service-types/service-types.module";
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { PaymentsModule } from "./payments/payments.module";
     TimeEntriesModule,
     TaxRatesModule,
     PaymentsModule,
+    ServiceTypesModule,
   ],
   providers: [
     {

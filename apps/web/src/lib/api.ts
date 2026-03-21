@@ -798,6 +798,31 @@ export async function getReportsSummary() {
   return apiRequest("/reports/summary");
 }
 
+// Service Types API functions
+export async function getServiceTypes() {
+  return apiRequest("/service-types");
+}
+
+export async function createServiceType(data: any) {
+  return apiRequest("/service-types", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateServiceType(id: string, data: any) {
+  return apiRequest(`/service-types/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteServiceType(id: string) {
+  return apiRequest(`/service-types/${id}`, {
+    method: "DELETE",
+  });
+}
+
 // Invoice Line Items API functions
 export async function getInvoiceLineItems(invoiceId: string) {
   return apiRequest(`/invoices/${invoiceId}/line-items`);

@@ -21,6 +21,8 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  BookOpen,
+  Layers,
 } from "lucide-react";
 
 const SIDEBAR_WIDTH = 240;
@@ -69,16 +71,18 @@ export function Navigation() {
   ];
 
   const adminLinks = [
-    { href: "/dashboard",         label: t("nav.dashboard"), icon: LayoutDashboard },
-    { href: "/clients",           label: t("nav.clients"),   icon: Users },
-    { href: "/estimates",         label: t("nav.estimates"), icon: ClipboardList },
-    { href: "/jobs",              label: t("nav.jobs"),      icon: Briefcase },
-    { href: "/schedule",          label: t("nav.schedule"),  icon: Calendar },
-    { href: "/invoices",          label: t("nav.invoices"),  icon: Receipt },
-    { href: "/expenses",          label: t("nav.expenses"),  icon: DollarSign },
-    { href: "/reports",           label: t("nav.reports"),   icon: BarChart2 },
-    { href: "/settings/templates",label: t("nav.templates"), icon: LayoutTemplate },
-    { href: "/settings",          label: t("nav.settings"),  icon: Settings },
+    { href: "/dashboard",              label: t("nav.dashboard"),      icon: LayoutDashboard },
+    { href: "/clients",                label: t("nav.clients"),        icon: Users },
+    { href: "/estimates",              label: t("nav.estimates"),      icon: ClipboardList },
+    { href: "/jobs",                   label: t("nav.jobs"),           icon: Briefcase },
+    { href: "/schedule",               label: t("nav.schedule"),       icon: Calendar },
+    { href: "/invoices",               label: t("nav.invoices"),       icon: Receipt },
+    { href: "/expenses",               label: t("nav.expenses"),       icon: DollarSign },
+    { href: "/accounts",               label: "Accounts",              icon: BookOpen },
+    { href: "/reports",                label: t("nav.reports"),        icon: BarChart2 },
+    { href: "/settings/service-types", label: "Service Types",         icon: Layers },
+    { href: "/settings/templates",     label: t("nav.templates"),      icon: LayoutTemplate },
+    { href: "/settings",               label: t("nav.settings"),       icon: Settings },
   ];
 
   const links = isClient ? clientLinks : adminLinks;
@@ -86,6 +90,7 @@ export function Navigation() {
   const logoutHref = isClient ? "/client/login" : "/login";
 
   function isLinkActive(href: string) {
+    if (href === "/settings/service-types") return pathname?.startsWith("/settings/service-types") ?? false;
     if (href === "/settings/templates") return pathname?.startsWith("/settings/templates") ?? false;
     if (href === "/settings") return pathname === "/settings";
     return pathname === href;

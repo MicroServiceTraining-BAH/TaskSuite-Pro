@@ -42,6 +42,11 @@ export class CreateEstimateDto {
   @IsString()
   estimateType?: string | null;
 
+  @ApiProperty({ required: false, description: "Reference to a custom ServiceType" })
+  @IsOptional()
+  @IsString()
+  serviceTypeId?: string | null;
+
   @ApiProperty({ required: false, description: "Builder-specific metadata (rooms, addons, materials, etc.)" })
   @IsOptional()
   metadata?: any;

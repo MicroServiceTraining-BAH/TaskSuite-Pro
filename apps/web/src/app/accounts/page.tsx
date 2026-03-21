@@ -3,6 +3,22 @@
 import { useState, useEffect } from "react";
 import { Button } from "@tasksuite/ui";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@tasksuite/ui";
+import { Input } from "@tasksuite/ui";
+import { Label } from "@tasksuite/ui";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@tasksuite/ui";
+import {
   Table,
   TableBody,
   TableCell,
@@ -13,11 +29,13 @@ import {
 import { getAccounts, createAccount, updateAccount, deleteAccount } from "@/lib/api";
 import { SearchBar } from "@/components/search-bar";
 
+const ACCOUNT_TYPES = ["income", "expense", "asset", "liability", "equity"] as const;
+
 export default function AccountsPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [allAccounts, setAllAccounts] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<any>(null);
   const [filter, setFilter] = useState<string>("all");
@@ -44,17 +62,13 @@ export default function AccountsPage() {
       setAccounts(data);
       return;
     }
-    
     const lowerQuery = query.toLowerCase();
-    const filtered = data.filter((account) => {
-      return (
-        account.name?.toLowerCase().includes(lowerQuery) ||
-        account.code?.toLowerCase().includes(lowerQuery) ||
-        account.type?.toLowerCase().includes(lowerQuery) ||
-        account.description?.toLowerCase().includes(lowerQuery)
-      );
-    });
-    setAccounts(filtered);
+    setAccounts(data.filter((account) =>
+      account.name?.toLowerCase().includes(lowerQuery) ||
+      account.code?.toLowerCase().includes(lowerQuery) ||
+      account.type?.toLowerCase().includes(lowerQuery) ||
+      account.description?.toLowerCase().includes(lowerQuery)
+    ));
   }
 
   useEffect(() => {
@@ -72,41 +86,43 @@ export default function AccountsPage() {
       await loadData();
       setIsDialogOpen(false);
       setEditingAccount(null);
-    } catch (error) {
-      console.error("Failed to save account:", error);
-      alert("Failed to save account");
+    } catch (error: any) {
+      alert(error.message || "Failed to save account");
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this account?")) return;
+    if (!confirm("Are you sure you want to delete this account? Expenses linked to it will become uncategorized.")) return;
     try {
       await deleteAccount(id);
       await loadData();
     } catch (error) {
-      console.error("Failed to delete account:", error);
       alert("Failed to delete account");
     }
   }
 
-  const accountTypes = ["income", "expense", "asset", "liability", "equity"];
-
   return (
     <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Chart of Accounts</h1>
+      <div className="flex justify-between items-center mb-2">
+        <div>
+          <h1 className="text-3xl font-bold">Chart of Accounts</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage accounts used to categorize income, expenses, assets, liabilities, and equity.
+          </p>
+        </div>
         <Button onClick={() => { setEditingAccount(null); setIsDialogOpen(true); }}>
           + Add Account
         </Button>
       </div>
 
-      <div className="mb-4 flex gap-2">
-        <Button variant={filter === "all" ? "default" : "outline"} onClick={() => setFilter("all")}>
+      <div className="mt-4 mb-4 flex flex-wrap gap-2">
+        <Button variant={filter === "all" ? "default" : "outline"} size="sm" onClick={() => setFilter("all")}>
           All
         </Button>
-        {accountTypes.map((type) => (
+        {ACCOUNT_TYPES.map((type) => (
           <Button
             key={type}
+            size="sm"
             variant={filter === type ? "default" : "outline"}
             onClick={() => setFilter(type)}
           >
@@ -130,26 +146,36 @@ export default function AccountsPage() {
               <TableHead>Code</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Type</TableHead>
+              <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {accounts.length === 0 ? (
+            {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center">
-                  No accounts found
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : accounts.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  No accounts found. Click "Add Account" to create your first one.
                 </TableCell>
               </TableRow>
             ) : (
               accounts.map((account) => (
                 <TableRow key={account.id}>
-                  <TableCell>{account.code || "-"}</TableCell>
-                  <TableCell>{account.name}</TableCell>
-                  <TableCell>{account.type}</TableCell>
+                  <TableCell className="font-mono text-sm">{account.code || "-"}</TableCell>
+                  <TableCell className="font-medium">{account.name}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded text-sm ${
-                      account.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
+                    <span className="capitalize">{account.type}</span>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm">{account.description || "-"}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      account.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"
                     }`}>
                       {account.isActive ? "Active" : "Inactive"}
                     </span>
@@ -181,7 +207,7 @@ export default function AccountsPage() {
       {isDialogOpen && (
         <AccountDialog
           open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
+          onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setEditingAccount(null); }}
           account={editingAccount}
           onSave={handleSave}
         />
@@ -198,6 +224,8 @@ function AccountDialog({ open, onOpenChange, account, onSave }: any) {
     description: "",
     isActive: true,
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (account) {
@@ -209,89 +237,103 @@ function AccountDialog({ open, onOpenChange, account, onSave }: any) {
         isActive: account.isActive !== undefined ? account.isActive : true,
       });
     } else {
-      setFormData({
-        name: "",
-        type: "expense",
-        code: "",
-        description: "",
-        isActive: true,
-      });
+      setFormData({ name: "", type: "expense", code: "", description: "", isActive: true });
     }
+    setErrors({});
   }, [account, open]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onSave(formData);
+    const errs: Record<string, string> = {};
+    if (!formData.name.trim()) errs.name = "Name is required";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setSaving(true);
+    try {
+      await onSave(formData);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
-    <div className={`fixed inset-0 bg-black/50 flex items-center justify-center z-50 ${open ? "" : "hidden"}`}>
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">{account ? "Edit Account" : "Add Account"}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Name *</label>
-            <input
-              type="text"
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{account ? "Edit Account" : "Add Account"}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-2">
+          <div className="grid gap-2">
+            <Label htmlFor="acc-name">Name <span className="text-destructive">*</span></Label>
+            <Input
+              id="acc-name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
+              onChange={(e) => { setFormData({ ...formData, name: e.target.value }); if (errors.name) setErrors({ ...errors, name: "" }); }}
+              placeholder="e.g. Office Supplies"
+              aria-invalid={!!errors.name}
             />
+            {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Type *</label>
-            <select
+
+          <div className="grid gap-2">
+            <Label htmlFor="acc-type">Type <span className="text-destructive">*</span></Label>
+            <Select
               value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
+              onValueChange={(value) => setFormData({ ...formData, type: value })}
             >
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-              <option value="asset">Asset</option>
-              <option value="liability">Liability</option>
-              <option value="equity">Equity</option>
-            </select>
+              <SelectTrigger id="acc-type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ACCOUNT_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Code</label>
-            <input
-              type="text"
+
+          <div className="grid gap-2">
+            <Label htmlFor="acc-code">Account Code</Label>
+            <Input
+              id="acc-code"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              placeholder="e.g., 5000"
+              placeholder="e.g. 5000"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <input
-              type="text"
+
+          <div className="grid gap-2">
+            <Label htmlFor="acc-desc">Description</Label>
+            <Input
+              id="acc-desc"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full border rounded px-3 py-2"
+              placeholder="Optional description"
             />
           </div>
+
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
-              id="isActive"
+              id="acc-active"
               checked={formData.isActive}
               onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
               className="rounded"
             />
-            <label htmlFor="isActive" className="text-sm font-medium">Active</label>
+            <Label htmlFor="acc-active" className="font-normal cursor-pointer">Active</Label>
           </div>
-          <div className="flex gap-2 justify-end">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
               Cancel
             </Button>
-            <Button type="submit">Save</Button>
-          </div>
+            <Button type="submit" disabled={saving}>
+              {saving ? "Saving..." : account ? "Update" : "Create"}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
-
