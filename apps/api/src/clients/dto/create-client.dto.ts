@@ -10,7 +10,7 @@ export class CreateClientDto {
 
   @ApiProperty({ example: "john@example.com", required: false })
   @IsOptional()
-  @IsEmail({ message: 'Invalid email address' })
+  @IsEmail({}, { message: 'Invalid email address' })
   email?: string | null;
 
   @ApiProperty({ example: "+1234567890", required: false })
