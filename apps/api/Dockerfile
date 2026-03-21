@@ -1,17 +1,15 @@
 FROM node:20-alpine AS base
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN apk add --no-cache openssl && \
+    corepack enable && corepack prepare pnpm@latest --activate
 
 FROM base AS deps
 WORKDIR /app
 
-# Copy workspace files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/types/package.json ./packages/types/
 
-# Install dependencies
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
@@ -28,23 +26,27 @@ RUN pnpm prisma:generate
 # Build the app
 RUN pnpm build
 
+# Create standalone deployment with flat node_modules
+WORKDIR /app
+RUN pnpm deploy --filter @tasksuite/api --prod /app/standalone
+
+# Copy built dist and prisma into standalone
+RUN cp -r apps/api/dist /app/standalone/dist && \
+    cp -r apps/api/prisma /app/standalone/prisma
+
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy necessary files
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/apps/api/prisma ./prisma
-COPY --from=builder /app/apps/api/package.json ./
+# Install prisma CLI for migrations and client generation
+RUN npm install -g prisma@5.22.0 --ignore-scripts
 
-# Create a non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nestjs
+COPY --from=builder /app/standalone ./
 
-USER nestjs
+# Regenerate Prisma Client in the runner environment
+RUN prisma generate
 
 EXPOSE 3001
 
-CMD ["node", "dist/main.js"]
+CMD ["sh", "-c", "prisma migrate deploy && node dist/main.js"]
