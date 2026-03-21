@@ -87,9 +87,6 @@ export default function ClientLoginPage() {
             ← Company Staff Login
           </a>
         </div>
-        <div className="mt-2 text-center text-xs text-muted-foreground/60">
-          Dev: john.smith@example.com / password123
-        </div>
       </Card>
     </div>
   );

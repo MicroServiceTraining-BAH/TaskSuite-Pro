@@ -96,9 +96,6 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
-        <div className="mt-4 text-center text-xs text-muted-foreground/60 border-t border-border pt-4">
-          Dev: owner@cleaningco.com / password123
-        </div>
       </Card>
     </div>
   );
