@@ -28,6 +28,7 @@ export function ClientDialog({ open, onOpenChange, client, onSave, saving = fals
     phone: "",
     address: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (client) {
@@ -40,10 +41,28 @@ export function ClientDialog({ open, onOpenChange, client, onSave, saving = fals
     } else {
       setFormData({ name: "", email: "", phone: "", address: "" });
     }
+    setErrors({});
   }, [client, open]);
+
+  function validate() {
+    const errs: Record<string, string> = {};
+    if (!formData.name.trim()) errs.name = "Name is required";
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errs.email = "Enter a valid email address";
+    }
+    if (formData.phone && formData.phone.length > 20) {
+      errs.phone = "Phone must be 20 characters or fewer";
+    }
+    return errs;
+  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
     onSave(formData);
   }
 
@@ -60,15 +79,17 @@ export function ClientDialog({ open, onOpenChange, client, onSave, saving = fals
           <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-4 sm:px-6">
             <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Name *</Label>
+              <Label htmlFor="name">Name <span className="text-destructive">*</span></Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, name: event.target.value })
-                }
-                required
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setFormData({ ...formData, name: event.target.value });
+                  if (errors.name) setErrors({ ...errors, name: "" });
+                }}
+                aria-invalid={!!errors.name}
               />
+              {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
@@ -76,20 +97,26 @@ export function ClientDialog({ open, onOpenChange, client, onSave, saving = fals
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, email: event.target.value })
-                }
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setFormData({ ...formData, email: event.target.value });
+                  if (errors.email) setErrors({ ...errors, email: "" });
+                }}
+                aria-invalid={!!errors.email}
               />
+              {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
                 value={formData.phone}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, phone: event.target.value })
-                }
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setFormData({ ...formData, phone: event.target.value });
+                  if (errors.phone) setErrors({ ...errors, phone: "" });
+                }}
+                aria-invalid={!!errors.phone}
               />
+              {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="address">Address</Label>

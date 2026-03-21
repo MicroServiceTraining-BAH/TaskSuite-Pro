@@ -1,9 +1,10 @@
-import { IsString, IsOptional, MinLength, IsBoolean, IsNumber, Min } from "class-validator";
+import { IsString, IsOptional, IsNotEmpty, MaxLength, IsIn, IsBoolean, IsNumber, Min } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateJobDto {
   @ApiProperty({ example: "client-id" })
   @IsString()
+  @IsNotEmpty({ message: 'Client is required' })
   clientId: string;
 
   @ApiProperty({ example: "estimate-id", required: false })
@@ -13,7 +14,8 @@ export class CreateJobDto {
 
   @ApiProperty({ example: "Kitchen Cleaning" })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty({ message: 'Job title is required' })
+  @MaxLength(200)
   title: string;
 
   @ApiProperty({ example: "Full kitchen deep clean", required: false })
@@ -23,6 +25,7 @@ export class CreateJobDto {
 
   @ApiProperty({ example: "pending", default: "pending" })
   @IsString()
+  @IsIn(['scheduled', 'in_progress', 'completed', 'cancelled'], { message: 'Invalid status' })
   status: string;
 
   @ApiProperty({ example: "cleaning", required: false })

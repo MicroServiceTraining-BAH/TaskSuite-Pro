@@ -62,6 +62,7 @@ export function EstimateDialog({
   const [taxRates, setTaxRates] = useState<any[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [metadata, setMetadata] = useState<any>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (open) {
@@ -115,6 +116,7 @@ export function EstimateDialog({
       setMetadata(null);
       setSelectedTemplateId("");
     }
+    setErrors({});
   }, [estimate, open]);
 
   async function loadTemplates() {
@@ -194,8 +196,12 @@ export function EstimateDialog({
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!formData.estimateType) {
-      alert("Please select a service type");
+    const errs: Record<string, string> = {};
+    if (!formData.clientId) errs.clientId = "Please select a client";
+    if (!formData.title.trim()) errs.title = "Title is required";
+    if (!formData.estimateType) errs.estimateType = "Please select a service type";
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
 
@@ -255,12 +261,15 @@ export function EstimateDialog({
               </div>
             )}
             <div className="grid gap-3">
-              <Label htmlFor="clientId" className="text-base font-medium">Client *</Label>
+              <Label htmlFor="clientId" className="text-base font-medium">Client <span className="text-destructive">*</span></Label>
               <Select
                 value={formData.clientId}
-                onValueChange={(value) => setFormData({ ...formData, clientId: value })}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, clientId: value });
+                  if (errors.clientId) setErrors({ ...errors, clientId: "" });
+                }}
               >
-                <SelectTrigger id="clientId">
+                <SelectTrigger id="clientId" aria-invalid={!!errors.clientId}>
                   <SelectValue placeholder="Select a client" />
                 </SelectTrigger>
                 <SelectContent>
@@ -271,20 +280,23 @@ export function EstimateDialog({
                   ))}
                 </SelectContent>
               </Select>
+              {errors.clientId && <p className="text-sm text-destructive">{errors.clientId}</p>}
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="title" className="text-base font-medium">Title *</Label>
+              <Label htmlFor="title" className="text-base font-medium">Title <span className="text-destructive">*</span></Label>
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, title: event.target.value })
-                }
-                required
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setFormData({ ...formData, title: event.target.value });
+                  if (errors.title) setErrors({ ...errors, title: "" });
+                }}
+                aria-invalid={!!errors.title}
               />
+              {errors.title && <p className="text-sm text-destructive">{errors.title}</p>}
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="estimateType" className="text-base font-medium">Service Type *</Label>
+              <Label htmlFor="estimateType" className="text-base font-medium">Service Type <span className="text-destructive">*</span></Label>
               <Select
                 value={formData.estimateType}
                 onValueChange={(value) => {
@@ -292,9 +304,10 @@ export function EstimateDialog({
                   setUseLineItems(false);
                   setLineItems([]);
                   setMetadata(null);
+                  if (errors.estimateType) setErrors({ ...errors, estimateType: "" });
                 }}
               >
-                <SelectTrigger id="estimateType">
+                <SelectTrigger id="estimateType" aria-invalid={!!errors.estimateType}>
                   <SelectValue placeholder="Select service type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -302,6 +315,7 @@ export function EstimateDialog({
                   <SelectItem value="flooring">Flooring Installation</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.estimateType && <p className="text-sm text-destructive">{errors.estimateType}</p>}
             </div>
             <div className="grid gap-3">
               <Label htmlFor="description" className="text-base font-medium">Description</Label>

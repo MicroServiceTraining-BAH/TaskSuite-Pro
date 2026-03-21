@@ -18,6 +18,7 @@ export default function SignupPage() {
   const [companyName, setCompanyName] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   // Redirect if already logged in
@@ -34,6 +35,17 @@ export default function SignupPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    const errs: Record<string, string> = {};
+    if (!companyName.trim()) errs.companyName = "Company name is required";
+    if (!email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Enter a valid email address";
+    if (!password) errs.password = "Password is required";
+    else if (password.length < 6) errs.password = "Password must be at least 6 characters";
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      return;
+    }
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -62,17 +74,19 @@ export default function SignupPage() {
             <div className="p-3 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg text-sm">{error}</div>
           )}
           <div className="space-y-1.5">
-            <Label htmlFor="companyName">Company Name *</Label>
+            <Label htmlFor="companyName">Company Name <span className="text-destructive">*</span></Label>
             <Input
               id="companyName"
               type="text"
               value={companyName}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setCompanyName(event.target.value)
-              }
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                setCompanyName(event.target.value);
+                if (fieldErrors.companyName) setFieldErrors((prev) => ({ ...prev, companyName: "" }));
+              }}
               placeholder="Acme Services"
-              required
+              aria-invalid={!!fieldErrors.companyName}
             />
+            {fieldErrors.companyName && <p className="text-sm text-destructive">{fieldErrors.companyName}</p>}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="name">Your Name</Label>
@@ -87,31 +101,34 @@ export default function SignupPage() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="email">Email <span className="text-destructive">*</span></Label>
             <Input
               id="email"
               type="email"
               value={email}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setEmail(event.target.value)
-              }
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                setEmail(event.target.value);
+                if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
+              }}
               placeholder="you@example.com"
-              required
+              aria-invalid={!!fieldErrors.email}
             />
+            {fieldErrors.email && <p className="text-sm text-destructive">{fieldErrors.email}</p>}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">Password *</Label>
+            <Label htmlFor="password">Password <span className="text-destructive">*</span></Label>
             <Input
               id="password"
               type="password"
               value={password}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setPassword(event.target.value)
-              }
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                setPassword(event.target.value);
+                if (fieldErrors.password) setFieldErrors((prev) => ({ ...prev, password: "" }));
+              }}
               placeholder="At least 6 characters"
-              minLength={6}
-              required
+              aria-invalid={!!fieldErrors.password}
             />
+            {fieldErrors.password && <p className="text-sm text-destructive">{fieldErrors.password}</p>}
           </div>
           <Button type="submit" className="w-full mt-2" disabled={loading}>
             {loading ? "Creating account..." : "Create account"}

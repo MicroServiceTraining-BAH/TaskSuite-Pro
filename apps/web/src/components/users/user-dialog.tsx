@@ -25,6 +25,7 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("user");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (user) {
@@ -38,32 +39,35 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
       setPassword("");
       setRole("user");
     }
+    setErrors({});
   }, [user, open]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data: any = {
-      email,
-      name,
-      role,
-    };
+    const errs: Record<string, string> = {};
 
-    // Only include password if creating new user or user provided a new one
+    if (!email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Enter a valid email address";
+
     if (!user) {
-      // New user must have password
-      if (!password) {
-        alert("Password is required for new users");
-        return;
-      }
-      data.password = password;
-    } else if (password) {
-      // Update password only if provided
-      data.password = password;
+      if (!password) errs.password = "Password is required for new users";
+      else if (password.length < 6) errs.password = "Password must be at least 6 characters";
+    } else if (password && password.length < 6) {
+      errs.password = "Password must be at least 6 characters";
     }
 
-    // Ensure companyId is never included (it's set from JWT on backend)
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
+    const data: any = { email, name, role };
+    if (!user) {
+      data.password = password;
+    } else if (password) {
+      data.password = password;
+    }
     delete data.companyId;
-    
     console.log("UserDialog - Sending data:", data);
     onSave(data);
   };
@@ -78,17 +82,19 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
           <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-4 sm:px-6">
             <div className="space-y-4 py-4">
               <div>
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="email">Email <span className="text-destructive">*</span></Label>
             <Input
               id="email"
               type="email"
               value={email}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setEmail(event.target.value)
-              }
-              required
-              disabled={!!user} // Can't change email after creation
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setEmail(event.target.value);
+                if (errors.email) setErrors({ ...errors, email: "" });
+              }}
+              disabled={!!user}
+              aria-invalid={!!errors.email}
             />
+            {errors.email && <p className="text-sm text-destructive mt-1">{errors.email}</p>}
           </div>
           <div>
             <Label htmlFor="name">Name</Label>
@@ -103,26 +109,27 @@ export function UserDialog({ open, onOpenChange, user, onSave }: UserDialogProps
           </div>
           <div>
             <Label htmlFor="password">
-              {user ? "New Password (leave blank to keep current)" : "Password *"}
+              {user ? "New Password (leave blank to keep current)" : <span>Password <span className="text-destructive">*</span></span>}
             </Label>
             <Input
               id="password"
               type="password"
               value={password}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(event.target.value)
-              }
-              required={!user}
-              minLength={6}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setPassword(event.target.value);
+                if (errors.password) setErrors({ ...errors, password: "" });
+              }}
+              aria-invalid={!!errors.password}
             />
-            {user && (
+            {errors.password && <p className="text-sm text-destructive mt-1">{errors.password}</p>}
+            {user && !errors.password && (
               <p className="text-xs text-muted-foreground mt-1">
                 Leave blank to keep the current password
               </p>
             )}
           </div>
           <div>
-            <Label htmlFor="role">Role *</Label>
+            <Label htmlFor="role">Role <span className="text-destructive">*</span></Label>
             <Select value={role} onValueChange={setRole}>
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />

@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsDate, IsOptional, MinLength, Min, ValidateNested, IsArray, IsBoolean } from "class-validator";
+import { IsString, IsNumber, IsDate, IsOptional, IsNotEmpty, Min, IsIn, ValidateNested, IsArray, IsBoolean } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { CreateInvoiceLineItemDto } from "./create-invoice-line-item.dto";
@@ -6,6 +6,7 @@ import { CreateInvoiceLineItemDto } from "./create-invoice-line-item.dto";
 export class CreateInvoiceDto {
   @ApiProperty({ example: "client-id" })
   @IsString()
+  @IsNotEmpty({ message: 'Client is required' })
   clientId: string;
 
   @ApiProperty({ example: "job-id", required: false })
@@ -15,7 +16,7 @@ export class CreateInvoiceDto {
 
   @ApiProperty({ example: "INV-2024-001" })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty({ message: 'Invoice number is required' })
   invoiceNumber: string;
 
   @ApiProperty({ example: 250.0, required: false })
@@ -38,6 +39,7 @@ export class CreateInvoiceDto {
 
   @ApiProperty({ example: "pending", default: "pending" })
   @IsString()
+  @IsIn(['draft', 'pending', 'paid', 'overdue', 'cancelled'], { message: 'Invalid status' })
   status: string;
 
   @ApiProperty({ type: [CreateInvoiceLineItemDto], required: false })

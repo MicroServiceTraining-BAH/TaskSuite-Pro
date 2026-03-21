@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, MinLength, Min, ValidateNested, IsArray, IsBoolean } from "class-validator";
+import { IsString, IsNumber, IsOptional, IsNotEmpty, MaxLength, Min, IsIn, ValidateNested, IsArray, IsBoolean } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { CreateEstimateLineItemDto } from "./create-estimate-line-item.dto";
@@ -6,11 +6,13 @@ import { CreateEstimateLineItemDto } from "./create-estimate-line-item.dto";
 export class CreateEstimateDto {
   @ApiProperty({ example: "client-id" })
   @IsString()
+  @IsNotEmpty({ message: 'Client is required' })
   clientId: string;
 
   @ApiProperty({ example: "Kitchen Cleaning Estimate" })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty({ message: 'Title is required' })
+  @MaxLength(200)
   title: string;
 
   @ApiProperty({ example: "Full kitchen deep clean", required: false })
@@ -32,6 +34,7 @@ export class CreateEstimateDto {
 
   @ApiProperty({ example: "draft", default: "draft" })
   @IsString()
+  @IsIn(['draft', 'sent', 'accepted', 'rejected'], { message: 'Invalid status' })
   status: string;
 
   @ApiProperty({ example: "cleaning", required: false })

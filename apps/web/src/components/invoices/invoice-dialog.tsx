@@ -51,6 +51,7 @@ export function InvoiceDialog({
   const [clients, setClients] = useState<any[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (open) {
@@ -86,6 +87,7 @@ export function InvoiceDialog({
       });
       setSelectedTemplateId("");
     }
+    setErrors({});
   }, [invoice, open]);
 
   async function loadTemplates() {
@@ -141,6 +143,17 @@ export function InvoiceDialog({
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!formData.clientId) errs.clientId = "Please select a client";
+    if (!formData.invoiceNumber.trim()) errs.invoiceNumber = "Invoice number is required";
+    if (!formData.amount) errs.amount = "Amount is required";
+    else if (isNaN(parseFloat(formData.amount)) || parseFloat(formData.amount) < 0) {
+      errs.amount = "Enter a valid amount";
+    }
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
     onSave({
       ...formData,
       amount: parseFloat(formData.amount) || 0,
@@ -184,12 +197,15 @@ export function InvoiceDialog({
               </div>
             )}
             <div className="grid gap-2">
-              <Label htmlFor="clientId">Client *</Label>
+              <Label htmlFor="clientId">Client <span className="text-destructive">*</span></Label>
               <Select
                 value={formData.clientId}
-                onValueChange={(value) => setFormData({ ...formData, clientId: value, jobId: "" })}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, clientId: value, jobId: "" });
+                  if (errors.clientId) setErrors({ ...errors, clientId: "" });
+                }}
               >
-                <SelectTrigger id="clientId">
+                <SelectTrigger id="clientId" aria-invalid={!!errors.clientId}>
                   <SelectValue placeholder="Select a client" />
                 </SelectTrigger>
                 <SelectContent>
@@ -200,6 +216,7 @@ export function InvoiceDialog({
                   ))}
                 </SelectContent>
               </Select>
+              {errors.clientId && <p className="text-sm text-destructive">{errors.clientId}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="jobId">Job (Optional)</Label>
@@ -222,28 +239,32 @@ export function InvoiceDialog({
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="invoiceNumber">Invoice Number *</Label>
+              <Label htmlFor="invoiceNumber">Invoice Number <span className="text-destructive">*</span></Label>
               <Input
                 id="invoiceNumber"
                 value={formData.invoiceNumber}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, invoiceNumber: event.target.value })
-                }
-                required
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setFormData({ ...formData, invoiceNumber: event.target.value });
+                  if (errors.invoiceNumber) setErrors({ ...errors, invoiceNumber: "" });
+                }}
+                aria-invalid={!!errors.invoiceNumber}
               />
+              {errors.invoiceNumber && <p className="text-sm text-destructive">{errors.invoiceNumber}</p>}
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="amount">Amount *</Label>
+              <Label htmlFor="amount">Amount <span className="text-destructive">*</span></Label>
               <Input
                 id="amount"
                 type="number"
                 step="0.01"
                 value={formData.amount}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  setFormData({ ...formData, amount: event.target.value })
-                }
-                required
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setFormData({ ...formData, amount: event.target.value });
+                  if (errors.amount) setErrors({ ...errors, amount: "" });
+                }}
+                aria-invalid={!!errors.amount}
               />
+              {errors.amount && <p className="text-sm text-destructive">{errors.amount}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="dueDate">Due Date</Label>
