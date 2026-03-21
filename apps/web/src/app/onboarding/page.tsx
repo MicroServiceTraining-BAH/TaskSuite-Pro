@@ -26,7 +26,7 @@ import {
   isOnboardingComplete,
   OnboardingData,
 } from "@/lib/onboarding";
-import { CheckCircle2, Shield, Zap } from "lucide-react";
+import { CheckCircle2, LogOut, Shield, Zap } from "lucide-react";
 
 const steps = [
   {
@@ -148,15 +148,26 @@ export default function OnboardingPage() {
     return base;
   }, [data.timezone]);
 
+  function handleLogout() {
+    auth.logout();
+    router.push("/login");
+  }
+
   return (
     <div className="min-h-screen bg-muted">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-12">
-        <div>
-          <p className="text-sm font-medium text-primary">TaskSuite Pro • Setup</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm font-medium text-primary">TaskSuite Pro • Setup</p>
           <h1 className="mt-2 text-4xl font-bold">Let’s get your company ready</h1>
           <p className="mt-2 text-base text-muted-foreground">
             A focused, three-step onboarding so your team can hit the ground running.
           </p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2 text-muted-foreground">
+            <LogOut size={15} />
+            Log out
+          </Button>
         </div>
 
         <ol className="grid gap-4 md:grid-cols-3">
@@ -387,9 +398,15 @@ export default function OnboardingPage() {
             )}
 
             <div className="flex items-center justify-between">
-              <Button variant="ghost" disabled={currentStep === 0} onClick={goToPreviousStep}>
-                Back
-              </Button>
+              {currentStep === 0 ? (
+                <Button variant="ghost" onClick={() => { markOnboardingComplete(data); router.push("/dashboard"); }}>
+                  Skip setup
+                </Button>
+              ) : (
+                <Button variant="ghost" onClick={goToPreviousStep}>
+                  Back
+                </Button>
+              )}
               {currentStep < steps.length - 1 ? (
                 <Button onClick={goToNextStep} disabled={!canContinue}>
                   Continue
