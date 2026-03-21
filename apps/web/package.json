@@ -14,7 +14,7 @@
     "@tasksuite/types": "workspace:*",
     "@tasksuite/ui": "workspace:*",
     "lucide-react": "^0.303.0",
-    "next": "^15.0.0",
+    "next": "^15.5.14",
     "next-themes": "^0.4.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
