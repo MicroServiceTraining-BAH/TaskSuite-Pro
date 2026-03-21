@@ -131,7 +131,7 @@ export class EstimatesService {
   async findAll(companyId: string) {
     return this.prisma.estimate.findMany({
       where: { companyId },
-      include: { client: true, lineItems: true },
+      include: { client: true, lineItems: true, serviceType: true },
       orderBy: { createdAt: "desc" },
     });
   }
@@ -139,7 +139,7 @@ export class EstimatesService {
   async findOne(id: string, companyId: string) {
     const estimate = await this.prisma.estimate.findFirst({
       where: { id, companyId },
-      include: { client: true, lineItems: true },
+      include: { client: true, lineItems: true, serviceType: true },
     });
     if (!estimate) {
       throw new NotFoundException(`Estimate with ID ${id} not found`);
@@ -189,9 +189,10 @@ export class EstimatesService {
   async findByPublicToken(token: string) {
     const estimate = await this.prisma.estimate.findUnique({
       where: { publicToken: token },
-      include: { 
+      include: {
         client: { select: { id: true, name: true, email: true, phone: true } },
         lineItems: true,
+        serviceType: true,
         company: { select: { id: true, name: true } }
       },
     });
@@ -256,7 +257,7 @@ export class EstimatesService {
         title: estimate.title,
         description: estimate.description,
         status: "pending",
-        jobType: estimate.estimateType || null, // Pass estimate type as job type
+        jobType: (estimate as any).serviceType?.name || estimate.estimateType || null,
       },
     });
 

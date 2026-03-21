@@ -114,7 +114,7 @@ export default function JobDetailPage() {
           </CardContent>
         </Card>
 
-        {job.jobType === "cleaning" && (
+        {(job.jobType?.toLowerCase().includes("clean") || (job.cleaningChecklist && job.cleaningChecklist.length > 0)) && (
           <Card>
             <CardHeader>
               <CardTitle>Cleaning Checklist</CardTitle>
@@ -129,7 +129,7 @@ export default function JobDetailPage() {
           </Card>
         )}
 
-        {job.jobType === "flooring" && (
+        {(job.jobType?.toLowerCase().includes("floor") || (job.flooringMaterials && job.flooringMaterials.length > 0)) && (
           <Card>
             <CardHeader>
               <CardTitle>Materials Used</CardTitle>

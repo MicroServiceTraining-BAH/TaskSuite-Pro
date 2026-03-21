@@ -23,6 +23,7 @@ export default function ClientsPage() {
   const [editingClient, setEditingClient] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadClients();
@@ -66,12 +67,14 @@ export default function ClientsPage() {
 
   async function handleCreate(data: any) {
     setSaving(true);
+    setError(null);
     try {
       await createClient(data);
       await loadClients();
       setIsDialogOpen(false);
-    } catch (error) {
-      console.error("Failed to create client:", error);
+    } catch (err: any) {
+      console.error("Failed to create client:", err);
+      setError(err?.message || "Failed to create client. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -79,13 +82,15 @@ export default function ClientsPage() {
 
   async function handleUpdate(id: string, data: any) {
     setSaving(true);
+    setError(null);
     try {
       await updateClient(id, data);
       await loadClients();
       setIsDialogOpen(false);
       setEditingClient(null);
-    } catch (error) {
-      console.error("Failed to update client:", error);
+    } catch (err: any) {
+      console.error("Failed to update client:", err);
+      setError(err?.message || "Failed to update client. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -267,10 +272,11 @@ export default function ClientsPage() {
 
       <ClientDialog
         open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
+        onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setError(null); }}
         client={editingClient}
         onSave={editingClient ? (data) => handleUpdate(editingClient.id, data) : handleCreate}
         saving={saving}
+        error={error}
       />
     </div>
   );

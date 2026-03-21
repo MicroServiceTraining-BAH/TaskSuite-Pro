@@ -178,9 +178,9 @@ export default function EstimatesPage() {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="font-medium">{estimate.title}</div>
-                  {estimate.estimateType && (
+                  {(estimate.serviceType?.name || estimate.estimateType) && (
                     <div className="text-sm text-muted-foreground capitalize mt-1">
-                      {estimate.estimateType === "cleaning" ? "Cleaning Service" : "Flooring Installation"}
+                      {estimate.serviceType?.name || estimate.estimateType}
                     </div>
                   )}
                 </div>
@@ -271,9 +271,9 @@ export default function EstimatesPage() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{estimate.title}</div>
-                      {estimate.estimateType && (
+                      {(estimate.serviceType?.name || estimate.estimateType) && (
                         <div className="text-sm text-muted-foreground capitalize">
-                          {estimate.estimateType === "cleaning" ? "Cleaning Service" : "Flooring Installation"}
+                          {estimate.serviceType?.name || estimate.estimateType}
                         </div>
                       )}
                     </div>
@@ -337,17 +337,6 @@ export default function EstimatesPage() {
         </Table>
       </div>
 
-      {error && (
-        <div className="mb-4 rounded-lg border border-red-500 bg-red-50 p-4 text-red-700">
-          {error}
-          <button
-            onClick={() => setError(null)}
-            className="ml-2 font-semibold underline"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
       <EstimateDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
@@ -366,6 +355,7 @@ export default function EstimatesPage() {
           }
         }}
         saving={saving}
+        error={error}
       />
     </div>
   );

@@ -22,6 +22,7 @@ export default function InvoicesPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadInvoices();
@@ -65,12 +66,14 @@ export default function InvoicesPage() {
 
   async function handleCreate(data: any) {
     setSaving(true);
+    setError(null);
     try {
       await createInvoice(data);
       await loadInvoices();
       setIsDialogOpen(false);
-    } catch (error) {
-      console.error("Failed to create invoice:", error);
+    } catch (err: any) {
+      console.error("Failed to create invoice:", err);
+      setError(err?.message || "Failed to create invoice. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -78,13 +81,15 @@ export default function InvoicesPage() {
 
   async function handleUpdate(id: string, data: any) {
     setSaving(true);
+    setError(null);
     try {
       await updateInvoice(id, data);
       await loadInvoices();
       setIsDialogOpen(false);
       setEditingInvoice(null);
-    } catch (error) {
-      console.error("Failed to update invoice:", error);
+    } catch (err: any) {
+      console.error("Failed to update invoice:", err);
+      setError(err?.message || "Failed to update invoice. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -286,7 +291,7 @@ export default function InvoicesPage() {
 
       <InvoiceDialog
         open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
+        onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setError(null); }}
         invoice={editingInvoice}
         onSave={(data) => {
           if (editingInvoice) {
@@ -296,6 +301,7 @@ export default function InvoicesPage() {
           }
         }}
         saving={saving}
+        error={error}
       />
     </div>
   );

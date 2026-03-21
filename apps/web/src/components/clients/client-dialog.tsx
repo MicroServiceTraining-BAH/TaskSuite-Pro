@@ -19,9 +19,10 @@ interface ClientDialogProps {
   client?: any;
   onSave: (data: any) => void;
   saving?: boolean;
+  error?: string | null;
 }
 
-export function ClientDialog({ open, onOpenChange, client, onSave, saving = false }: ClientDialogProps) {
+export function ClientDialog({ open, onOpenChange, client, onSave, saving = false, error }: ClientDialogProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -78,6 +79,11 @@ export function ClientDialog({ open, onOpenChange, client, onSave, saving = fals
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-4 sm:px-6">
             <div className="grid gap-4 py-4">
+            {error && (
+              <div className="p-3 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             <div className="grid gap-2">
               <Label htmlFor="name">Name <span className="text-destructive">*</span></Label>
               <Input

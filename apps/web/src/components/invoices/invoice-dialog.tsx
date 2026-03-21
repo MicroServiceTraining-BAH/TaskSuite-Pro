@@ -28,6 +28,7 @@ interface InvoiceDialogProps {
   invoice?: any;
   onSave: (data: any) => void;
   saving?: boolean;
+  error?: string | null;
 }
 
 export function InvoiceDialog({
@@ -36,6 +37,7 @@ export function InvoiceDialog({
   invoice,
   onSave,
   saving = false,
+  error,
 }: InvoiceDialogProps) {
   const [formData, setFormData] = useState({
     clientId: "",
@@ -178,6 +180,11 @@ export function InvoiceDialog({
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
           <div className="overflow-y-auto overscroll-contain flex-1 min-h-0 px-4 sm:px-6">
             <div className="grid gap-4 py-4">
+            {error && (
+              <div className="p-3 bg-destructive/10 text-destructive border border-destructive/20 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             {!invoice && templates.length > 0 && (
               <div className="grid gap-2">
                 <Label htmlFor="template">Template (Optional)</Label>
