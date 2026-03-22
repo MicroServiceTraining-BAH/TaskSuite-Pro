@@ -171,7 +171,7 @@ export default function ServiceTypesPage() {
       {isDialogOpen && (
         <ServiceTypeDialog
           open={isDialogOpen}
-          onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setEditing(null); }}
+          onOpenChange={(open: boolean) => { setIsDialogOpen(open); if (!open) setEditing(null); }}
           serviceType={editing}
           onSave={handleSave}
           saving={saving}

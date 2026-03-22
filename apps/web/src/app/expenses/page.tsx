@@ -202,7 +202,7 @@ export default function ExpensesPage() {
       {isDialogOpen && (
         <ExpenseDialog
           open={isDialogOpen}
-          onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setEditingExpense(null); }}
+          onOpenChange={(open: boolean) => { setIsDialogOpen(open); if (!open) setEditingExpense(null); }}
           expense={editingExpense}
           accounts={expenseAccounts}
           onSave={handleSave}

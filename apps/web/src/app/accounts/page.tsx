@@ -207,7 +207,7 @@ export default function AccountsPage() {
       {isDialogOpen && (
         <AccountDialog
           open={isDialogOpen}
-          onOpenChange={(open) => { setIsDialogOpen(open); if (!open) setEditingAccount(null); }}
+          onOpenChange={(open: boolean) => { setIsDialogOpen(open); if (!open) setEditingAccount(null); }}
           account={editingAccount}
           onSave={handleSave}
         />
